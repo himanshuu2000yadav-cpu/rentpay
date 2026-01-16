@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EasyRent Pay</title>
+<style>
+    body{font-family:Arial;background:#eef4ff;margin:0;padding:0;}
+    h2{color:#004c94;margin-bottom:10px;}
+    .box{background:#fff;padding:20px;margin:20px auto;border-radius:10px;
+         max-width:800px;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
+    input,select{width:100%;padding:14px;margin:8px 0;border-radius:6px;font-size:16px;
+                 border:1px solid #bbb;}
+    label{font-weight:bold;color:#004c94;margin-top:12px;display:block;}
+    #summary{background:#eaf4ff;padding:18px;border-left:6px solid #0077ff;
+             font-size:20px;margin-top:15px;border-radius:6px;}
+    button{width:100%;padding:15px;margin-top:15px;background:#0066ff;color:#fff;
+           border:none;font-size:20px;border-radius:6px;cursor:pointer;font-weight:700;}
+    button:hover{background:#0047bd;}
+    .note{font-size:14px;color:#444;margin-top:-4px;}
+</style>
+</head>
+<body>
+
+<h2 style="text-align:center;margin-top:20px;">🏠 EasyRent Pay – Credit Card Rent Payments</h2>
+
+<div class="box">
+    <h2>Your Details</h2>
+    <label>Your Name</label>
+    <input id="tName" placeholder="Tenant Name">
+
+    <label>Rent Amount (₹)</label>
+    <input id="rentAmt" type="number" placeholder="Example: 15000">
+</div>
+
+<div class="box">
+    <h2>Landlord Details</h2>
+    <label>Owner Name</label>
+    <input id="oName" placeholder="Owner Full Name">
+
+    <label>Owner UPI ID</label>
+    <input id="oUPI" placeholder="eg: abcd@okaxis">
+
+    <label>Owner Bank Account (Optional)</label>
+    <input id="oBank" placeholder="IFSC + Account Number (if direct transfer)">
+</div>
+
+
+<div class="box">
+    <h2>Select Payment Mode 💳</h2>
+    <select id="method">
+        <option value="">Choose Method</option>
+        <option value="upi">UPI (Free)</option>
+        <option value="debit">Debit Card (₹20 flat)</option>
+        <option value="credit">Credit Card (2% + 0.5% platform fee)</option>
+    </select>
+    <p id="feeInfo" class="note"></p>
+
+    <div id="summary">
+        Total Payable: ₹ <span id="total">0</span>
+    </div>
+
+    <button onclick="payNow()">Proceed to Pay</button>
+</div>
+
+
+<script>
+function calc(){
+    let amt = Number(document.getElementById("rentAmt").value);
+    let mode = document.getElementById("method").value;
+    let total = amt;
+    let msg = "";
+
+    if(mode === "debit"){
+        total += 20;
+        msg = "₹20 debit card processing fee added";
+    }
+    else if(mode === "credit"){
+        let fee = amt * 0.025; // 2% + 0.5%
+        total += fee;
+        msg = "Includes 2% bank + 0.5% platform = ₹" + fee.toFixed(2);
+    }
+    else{
+        msg = "UPI payment is free";
+    }
+
+    document.getElementById("total").innerText = total.toFixed(2);
+    document.getElementById("feeInfo").innerText = msg;
+}
+
+document.getElementById("rentAmt").addEventListener("input", calc);
+document.getElementById("method").addEventListener("change", calc);
+
+function payNow(){
+    alert("📩 Payment mock started — integrate Razorpay next!");
+}
+</script>
+
+</body>
+</html>
