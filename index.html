@@ -12,11 +12,11 @@
     header{
       background:#0d47a1;
       color:#fff;
-      padding:20px;
+      padding:22px;
       text-align:center;
     }
     header h1{margin:0;font-size:28px}
-    header p{margin:6px 0 0;font-size:14px;opacity:.9}
+    header p{margin:6px 0 0;font-size:14px;opacity:.95}
 
     .container{
       max-width:900px;
@@ -83,10 +83,18 @@
     button:hover{background:#0d47a1}
 
     footer{
+      background:#eef3fb;
       text-align:center;
-      font-size:12px;
-      color:#555;
-      padding:20px;
+      font-size:12.5px;
+      color:#333;
+      padding:25px 15px;
+      line-height:1.6;
+    }
+
+    footer strong{
+      display:block;
+      margin-bottom:6px;
+      color:#0d47a1;
     }
   </style>
 </head>
@@ -94,8 +102,8 @@
 <body>
 
 <header>
-  <h1>🏠 EasyRent Pay – Smart Property Payment Platform</h1>
-  <p>Pay housing-related charges securely using UPI, Bank Transfer or Cards</p>
+  <h1>🏠 EasyRent Pay</h1>
+  <p>A Smart Platform for Rent, Maintenance & Property Payments</p>
 </header>
 
 <div class="container">
@@ -105,20 +113,20 @@
     <h2>Payer Details</h2>
 
     <label>Full Name</label>
-    <input type="text" placeholder="Your full name">
+    <input type="text" placeholder="Enter your full name">
 
     <label>Payment Amount (₹)</label>
     <input type="number" id="amount" placeholder="Example: 30000" oninput="calculate()">
   </div>
 
-  <!-- BENEFICIARY -->
+  <!-- BENEFICIARY DETAILS -->
   <div class="card">
-    <h2>Property Beneficiary Details</h2>
+    <h2>Beneficiary / Property Details</h2>
 
     <label>Beneficiary Name</label>
-    <input type="text" placeholder="Owner / Society / Beneficiary name">
+    <input type="text" placeholder="Owner / Society / Property Name">
 
-    <label>UPI ID / Bank Details</label>
+    <label>UPI ID or Bank Details</label>
     <input type="text" placeholder="abcd@bank or Account details">
 
     <label>Purpose of Payment</label>
@@ -135,9 +143,9 @@
     <h2>Select Payment Method</h2>
 
     <select id="method" onchange="calculate()">
-      <option value="upi">UPI / Bank Transfer (No additional charges)</option>
+      <option value="upi">UPI / Bank Transfer (No extra charges)</option>
       <option value="debit">Debit Card (Standard processing fee)</option>
-      <option value="credit">Credit Card (Includes bank & platform charges)</option>
+      <option value="credit">Credit Card (Bank + Platform charges)</option>
     </select>
 
     <div class="info" id="feeText"></div>
@@ -152,10 +160,17 @@
 </div>
 
 <footer>
-  EasyRent Pay acts as a payment facilitation platform.<br>
-  We do not provide credit, lending, or financial advisory services.<br>
-  Payments are processed via RBI-authorised payment partners.<br>
-  Settlement timelines depend on banks and payment networks.
+  <strong>Important Disclaimer</strong>
+  EasyRent Pay is a <b>payment facilitation platform</b> only.<br>
+  We <b>do not provide loans, credit, BNPL, or financial advisory services</b> of any kind.<br><br>
+
+  All payments are processed through <b>RBI-authorised banks and payment gateways</b>.<br>
+  Credit card usage, fees, rewards, interest, and billing cycles are governed solely by the card-issuing bank.<br><br>
+
+  EasyRent Pay does <b>not guarantee instant settlement</b>.<br>
+  Settlement timelines depend on banking partners, card networks, and regulatory norms.<br><br>
+
+  By proceeding, users agree that EasyRent Pay holds <b>no liability</b> for delays, chargebacks, or disputes between payer and beneficiary.
 </footer>
 
 <script>
@@ -167,7 +182,7 @@ function calculate(){
 
   if(method === "credit"){
     fee = amount * 0.025;
-    text = "Includes standard bank processing and platform facilitation charges";
+    text = "Includes applicable bank charges and platform facilitation fees";
   }
   else if(method === "debit"){
     fee = 20;
