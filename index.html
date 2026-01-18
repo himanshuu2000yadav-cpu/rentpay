@@ -1,101 +1,187 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>EasyRent Pay</title>
-<style>
-    body{font-family:Arial;background:#eef4ff;margin:0;padding:0;}
-    h2{color:#004c94;margin-bottom:10px;}
-    .box{background:#fff;padding:20px;margin:20px auto;border-radius:10px;
-         max-width:800px;box-shadow:0 4px 12px rgba(0,0,0,0.08);}
-    input,select{width:100%;padding:14px;margin:8px 0;border-radius:6px;font-size:16px;
-                 border:1px solid #bbb;}
-    label{font-weight:bold;color:#004c94;margin-top:12px;display:block;}
-    #summary{background:#eaf4ff;padding:18px;border-left:6px solid #0077ff;
-             font-size:20px;margin-top:15px;border-radius:6px;}
-    button{width:100%;padding:15px;margin-top:15px;background:#0066ff;color:#fff;
-           border:none;font-size:20px;border-radius:6px;cursor:pointer;font-weight:700;}
-    button:hover{background:#0047bd;}
-    .note{font-size:14px;color:#444;margin-top:-4px;}
-</style>
+  <meta charset="UTF-8">
+  <title>EasyRent Pay – Smart Property Payment Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+    body{margin:0;background:#f4f8ff;color:#222}
+
+    header{
+      background:#0d47a1;
+      color:#fff;
+      padding:20px;
+      text-align:center;
+    }
+    header h1{margin:0;font-size:28px}
+    header p{margin:6px 0 0;font-size:14px;opacity:.9}
+
+    .container{
+      max-width:900px;
+      margin:30px auto;
+      padding:0 15px;
+    }
+
+    .card{
+      background:#fff;
+      border-radius:10px;
+      padding:20px;
+      margin-bottom:25px;
+      box-shadow:0 4px 12px rgba(0,0,0,.08);
+    }
+
+    h2{
+      margin-top:0;
+      color:#0d47a1;
+      font-size:20px;
+    }
+
+    label{
+      display:block;
+      margin:12px 0 6px;
+      font-weight:600;
+      font-size:14px;
+    }
+
+    input, select{
+      width:100%;
+      padding:12px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      font-size:15px;
+    }
+
+    .info{
+      font-size:13px;
+      margin-top:8px;
+      color:#555;
+    }
+
+    .total{
+      background:#e3f2fd;
+      padding:15px;
+      border-left:5px solid #0d47a1;
+      font-size:18px;
+      font-weight:700;
+      margin-top:15px;
+    }
+
+    button{
+      width:100%;
+      padding:15px;
+      margin-top:20px;
+      border:none;
+      border-radius:8px;
+      background:#1976d2;
+      color:#fff;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    button:hover{background:#0d47a1}
+
+    footer{
+      text-align:center;
+      font-size:12px;
+      color:#555;
+      padding:20px;
+    }
+  </style>
 </head>
+
 <body>
 
-<h2 style="text-align:center;margin-top:20px;">🏠 EasyRent Pay – Credit Card Rent Payments</h2>
+<header>
+  <h1>🏠 EasyRent Pay – Smart Property Payment Platform</h1>
+  <p>Pay housing-related charges securely using UPI, Bank Transfer or Cards</p>
+</header>
 
-<div class="box">
-    <h2>Your Details</h2>
-    <label>Your Name</label>
-    <input id="tName" placeholder="Tenant Name">
+<div class="container">
 
-    <label>Rent Amount (₹)</label>
-    <input id="rentAmt" type="number" placeholder="Example: 15000">
-</div>
+  <!-- PAYER DETAILS -->
+  <div class="card">
+    <h2>Payer Details</h2>
 
-<div class="box">
-    <h2>Landlord Details</h2>
-    <label>Owner Name</label>
-    <input id="oName" placeholder="Owner Full Name">
+    <label>Full Name</label>
+    <input type="text" placeholder="Your full name">
 
-    <label>Owner UPI ID</label>
-    <input id="oUPI" placeholder="eg: abcd@okaxis">
+    <label>Payment Amount (₹)</label>
+    <input type="number" id="amount" placeholder="Example: 30000" oninput="calculate()">
+  </div>
 
-    <label>Owner Bank Account (Optional)</label>
-    <input id="oBank" placeholder="IFSC + Account Number (if direct transfer)">
-</div>
+  <!-- BENEFICIARY -->
+  <div class="card">
+    <h2>Property Beneficiary Details</h2>
 
+    <label>Beneficiary Name</label>
+    <input type="text" placeholder="Owner / Society / Beneficiary name">
 
-<div class="box">
-    <h2>Select Payment Mode 💳</h2>
-    <select id="method">
-        <option value="">Choose Method</option>
-        <option value="upi">UPI (Free)</option>
-        <option value="debit">Debit Card (₹20 flat)</option>
-        <option value="credit">Credit Card (2% + 0.5% platform fee)</option>
+    <label>UPI ID / Bank Details</label>
+    <input type="text" placeholder="abcd@bank or Account details">
+
+    <label>Purpose of Payment</label>
+    <select>
+      <option>Rent</option>
+      <option>Maintenance</option>
+      <option>Housing Charges</option>
+      <option>Other Property Charges</option>
     </select>
-    <p id="feeInfo" class="note"></p>
+  </div>
 
-    <div id="summary">
-        Total Payable: ₹ <span id="total">0</span>
+  <!-- PAYMENT MODE -->
+  <div class="card">
+    <h2>Select Payment Method</h2>
+
+    <select id="method" onchange="calculate()">
+      <option value="upi">UPI / Bank Transfer (No additional charges)</option>
+      <option value="debit">Debit Card (Standard processing fee)</option>
+      <option value="credit">Credit Card (Includes bank & platform charges)</option>
+    </select>
+
+    <div class="info" id="feeText"></div>
+
+    <div class="total" id="totalPayable">
+      Total Payable Amount: ₹0
     </div>
 
-    <button onclick="payNow()">Proceed to Pay</button>
+    <button>Proceed Securely</button>
+  </div>
+
 </div>
 
+<footer>
+  EasyRent Pay acts as a payment facilitation platform.<br>
+  We do not provide credit, lending, or financial advisory services.<br>
+  Payments are processed via RBI-authorised payment partners.<br>
+  Settlement timelines depend on banks and payment networks.
+</footer>
 
 <script>
-function calc(){
-    let amt = Number(document.getElementById("rentAmt").value);
-    let mode = document.getElementById("method").value;
-    let total = amt;
-    let msg = "";
+function calculate(){
+  let amount = Number(document.getElementById("amount").value || 0);
+  let method = document.getElementById("method").value;
+  let fee = 0;
+  let text = "";
 
-    if(mode === "debit"){
-        total += 20;
-        msg = "₹20 debit card processing fee added";
-    }
-    else if(mode === "credit"){
-        let fee = amt * 0.025; // 2% + 0.5%
-        total += fee;
-        msg = "Includes 2% bank + 0.5% platform = ₹" + fee.toFixed(2);
-    }
-    else{
-        msg = "UPI payment is free";
-    }
+  if(method === "credit"){
+    fee = amount * 0.025;
+    text = "Includes standard bank processing and platform facilitation charges";
+  }
+  else if(method === "debit"){
+    fee = 20;
+    text = "Includes standard debit card processing charges";
+  }
+  else{
+    text = "No additional charges applied";
+  }
 
-    document.getElementById("total").innerText = total.toFixed(2);
-    document.getElementById("feeInfo").innerText = msg;
-}
-
-document.getElementById("rentAmt").addEventListener("input", calc);
-document.getElementById("method").addEventListener("change", calc);
-
-function payNow(){
-    alert("📩 Payment mock started — integrate Razorpay next!");
+  document.getElementById("feeText").innerText = text;
+  document.getElementById("totalPayable").innerText =
+    "Total Payable Amount: ₹" + (amount + fee).toFixed(2);
 }
 </script>
 
 </body>
 </html>
-
