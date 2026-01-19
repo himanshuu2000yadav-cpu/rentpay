@@ -1,76 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>EasyRent Pay – Payment Details</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <!-- Razorpay -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-
-  <style>
-    body{font-family:Arial;background:#f4f8ff}
-    .box{
-      max-width:500px;
-      margin:50px auto;
-      background:#fff;
-      padding:25px;
-      border-radius:10px;
-      box-shadow:0 5px 15px rgba(0,0,0,.1)
-    }
-    h2{color:#0d47a1}
-    input,button{
-      width:100%;
-      padding:12px;
-      margin-top:12px
-    }
-    button{
-      background:#1976d2;
-      color:#fff;
-      border:none;
-      border-radius:6px;
-      font-size:16px
-    }
-  </style>
+<meta charset="UTF-8">
+<title>EasyRent Pay – Details</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+body{margin:0;font-family:Arial;background:#f4f8ff}
+.card{max-width:600px;margin:40px auto;background:#fff;padding:25px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
+h2{color:#0d47a1}
+input,select,button{width:100%;padding:12px;margin-top:10px}
+button{background:#1976d2;color:#fff;border:none;font-size:18px;font-weight:700;border-radius:6px}
+</style>
 </head>
 
 <body>
 
-<div class="box">
-  <h2>Payment Details</h2>
+<div class="card">
+<h2>Payment Details</h2>
 
-  <input id="name" placeholder="Your Name">
-  <input id="phone" placeholder="Mobile Number">
-  <input id="email" placeholder="Email">
+<input type="text" id="payer" placeholder="Your Name">
+<input type="text" id="owner" placeholder="Landlord Name">
+<input type="text" id="upi" placeholder="Landlord UPI / Bank Details">
 
-  <input id="owner" placeholder="Landlord Name">
-  <input id="upi" placeholder="Landlord UPI / Bank">
+<select id="method">
+<option>Credit Card</option>
+<option>Debit Card</option>
+<option>UPI</option>
+</select>
 
-  <button onclick="pay()">Pay Now</button>
+<button onclick="pay()">Pay ₹<span id="amt"></span></button>
 </div>
 
 <script>
-const urlParams = new URLSearchParams(window.location.search);
-const amount = urlParams.get('amount');
+const params = new URLSearchParams(window.location.search);
+const amount = params.get("amount");
+document.getElementById("amt").innerText = amount;
 
 function pay(){
-  let options = {
-    key: "RAZORPAY_KEY_ID_HERE",   // 🔴 live key
-    amount: amount * 100,
-    currency: "INR",
-    name: "EasyRent Pay",
-    description: "Rent / Property Payment",
-    handler: function (response){
-      alert("Payment Successful");
-      console.log(response);
-    },
-    prefill: {
-      name: document.getElementById("name").value,
-      email: document.getElementById("email").value,
-      contact: document.getElementById("phone").value
-    },
-    theme: { color: "#1976d2" }
+  var options = {
+    "key": "RAZORPAY_LIVE_KEY_HERE",
+    "amount": amount*100,
+    "currency": "INR",
+    "name": "EasyRent Pay",
+    "description": "Rent / Property Payment",
+    "handler": function (response){
+        alert("Payment Successful");
+    }
   };
-  new Razorpay(options).open();
+  var rzp = new Razorpay(options);
+  rzp.open();
 }
 </script>
 
