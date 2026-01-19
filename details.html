@@ -2,65 +2,74 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Rent Payment</title>
+  <title>Confirm Payment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
     body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
       margin: 0;
-      padding: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f6fc;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
 
-    .container {
-      max-width: 400px;
-      margin: 60px auto;
-      background: #ffffff;
-      padding: 20px;
-      border-radius: 6px;
-      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    .card {
+      background: #fff;
+      width: 360px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
       text-align: center;
     }
 
     h2 {
+      color: #0a3d91;
       margin-bottom: 10px;
     }
 
     .amount {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: bold;
       margin: 20px 0;
     }
 
     button {
-      padding: 12px 20px;
+      width: 100%;
+      padding: 14px;
+      background: #28a745;
+      color: #fff;
       font-size: 16px;
+      border: none;
+      border-radius: 6px;
       cursor: pointer;
+    }
+
+    button:hover {
+      background: #1e7e34;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="container">
-    <h2>Rent Payment</h2>
-    <div class="amount" id="amount">₹ 0</div>
+  <div class="card">
+    <h2>Confirm Rent Payment</h2>
+    <div class="amount" id="showAmount">₹ 0</div>
     <button onclick="payNow()">Pay Now</button>
   </div>
 
   <script>
-    // URL se amount lena
     const params = new URLSearchParams(window.location.search);
     const amount = params.get("amount");
 
-    if (amount) {
-      document.getElementById("amount").innerText = "₹ " + amount;
-    }
+    document.getElementById("showAmount").innerText =
+      "₹ " + (amount || 0);
 
     function payNow() {
-      alert("Payment Amount: ₹ " + (amount || 0));
-      // yahan future me Razorpay / PhonePe / UPI add kar sakta hai
+      alert("Payment initiated for ₹ " + amount);
     }
   </script>
 
