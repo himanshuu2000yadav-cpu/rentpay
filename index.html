@@ -21,76 +21,32 @@
     header h1{margin:0;font-size:26px}
     header p{margin-top:6px;font-size:14px;opacity:.9}
 
-    .container{
-      max-width:900px;
-      margin:30px auto;
-      padding:0 15px;
-    }
-
+    .container{max-width:900px;margin:30px auto;padding:0 15px}
     .card{
-      background:#fff;
-      border-radius:10px;
-      padding:20px;
-      margin-bottom:25px;
-      box-shadow:0 4px 12px rgba(0,0,0,.08);
+      background:#fff;border-radius:10px;padding:20px;
+      margin-bottom:25px;box-shadow:0 4px 12px rgba(0,0,0,.08)
     }
-
-    h2{
-      margin-top:0;
-      color:#0d47a1;
-      font-size:20px;
+    h2{margin-top:0;color:#0d47a1;font-size:20px}
+    label{display:block;margin:12px 0 6px;font-weight:600;font-size:14px}
+    input,select{
+      width:100%;padding:12px;border-radius:6px;
+      border:1px solid #ccc;font-size:15px
     }
-
-    label{
-      display:block;
-      margin:12px 0 6px;
-      font-weight:600;
-      font-size:14px;
-    }
-
-    input, select{
-      width:100%;
-      padding:12px;
-      border-radius:6px;
-      border:1px solid #ccc;
-      font-size:15px;
-    }
-
-    .info{
-      font-size:13px;
-      margin-top:8px;
-      color:#555;
-    }
-
+    .info{font-size:13px;margin-top:8px;color:#555}
     .total{
-      background:#e3f2fd;
-      padding:15px;
-      border-left:5px solid #0d47a1;
-      font-size:18px;
-      font-weight:700;
-      margin-top:15px;
+      background:#e3f2fd;padding:15px;border-left:5px solid #0d47a1;
+      font-size:18px;font-weight:700;margin-top:15px
     }
-
     button{
-      width:100%;
-      padding:15px;
-      margin-top:20px;
-      border:none;
-      border-radius:8px;
-      background:#1976d2;
-      color:#fff;
-      font-size:18px;
-      font-weight:700;
-      cursor:pointer;
+      width:100%;padding:15px;margin-top:20px;
+      border:none;border-radius:8px;background:#1976d2;
+      color:#fff;font-size:18px;font-weight:700;cursor:pointer
     }
     button:hover{background:#0d47a1}
 
     footer{
-      text-align:center;
-      font-size:12px;
-      color:#444;
-      padding:25px 15px;
-      background:#f1f5ff;
+      text-align:center;font-size:12px;color:#444;
+      padding:25px 15px;background:#f1f5ff
     }
   </style>
 </head>
@@ -104,29 +60,33 @@
 
 <div class="container">
 
-  <!-- PAYER DETAILS -->
+  <!-- PAYER -->
   <div class="card">
     <h2>Payer Details</h2>
 
-    <label>Your Full Name</label>
-    <input type="text" id="payerName" placeholder="Your full name">
+    <label>Full Name *</label>
+    <input type="text" id="payerName">
 
-    <label>Payment Amount (₹)</label>
-    <input type="number" id="amount" placeholder="Example: 30000" oninput="calculate()">
+    <label>Mobile Number *</label>
+    <input type="tel" id="mobile" placeholder="10-digit mobile number">
+
+    <label>Payment Amount (₹) *</label>
+    <input type="number" id="amount" oninput="calculate()">
   </div>
 
   <!-- BENEFICIARY -->
   <div class="card">
     <h2>Beneficiary Details</h2>
 
-    <label>Beneficiary Name</label>
-    <input type="text" id="beneficiary" placeholder="Owner / Society / Beneficiary">
+    <label>Beneficiary Name *</label>
+    <input type="text" id="beneficiary">
 
-    <label>UPI ID / Bank Details</label>
-    <input type="text" placeholder="abcd@bank or Account details">
+    <label>UPI ID / Bank Details *</label>
+    <input type="text" id="upi">
 
-    <label>Purpose of Payment</label>
+    <label>Purpose of Payment *</label>
     <select id="purpose">
+      <option value="">Select</option>
       <option>Rent</option>
       <option>Maintenance</option>
       <option>Housing Charges</option>
@@ -134,122 +94,103 @@
     </select>
   </div>
 
-  <!-- PAYMENT MODE -->
+  <!-- PAYMENT -->
   <div class="card">
-    <h2>Select Payment Method</h2>
+    <h2>Select Payment Method *</h2>
 
     <select id="method" onchange="calculate()">
-      <option value="upi">UPI / Bank Transfer (No extra charges)</option>
-      <option value="debit">Debit Card (₹20 processing fee)</option>
-      <option value="credit">Credit Card (2.5% total charges)</option>
+      <option value="">Select</option>
+      <option value="upi">UPI / Bank Transfer</option>
+      <option value="debit">Debit Card (+₹20)</option>
+      <option value="credit">Credit Card (+2.5%)</option>
     </select>
 
     <div class="info" id="feeText"></div>
-
-    <div class="total" id="totalPayable">
-      Total Payable Amount: ₹0
-    </div>
+    <div class="total" id="totalPayable">Total Payable Amount: ₹0</div>
 
     <button onclick="openConfirm()">Proceed to Pay</button>
   </div>
-
 </div>
 
 <footer>
-  <strong>Important Disclaimer</strong><br><br>
-  EasyRent Pay is a payment facilitation platform only.<br>
-  We do not provide credit, lending, or financial advisory services.<br>
-  All payments are processed via RBI-authorised payment partners.<br>
-  Settlement timelines depend on banks, card networks, and payment methods.
+  Payments processed via RBI-authorised partners only.
 </footer>
 
-<!-- CONFIRMATION MODAL -->
-<div id="confirmModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:999; align-items:center; justify-content:center;">
-  <div style="background:#fff; width:90%; max-width:440px; border-radius:14px; padding:28px; box-shadow:0 15px 35px rgba(0,0,0,.25);">
+<!-- CONFIRM MODAL -->
+<div id="confirmModal" style="display:none;position:fixed;inset:0;
+background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center">
+  <div style="background:#fff;width:90%;max-width:440px;border-radius:14px;padding:28px">
 
-    <h2 style="margin:0 0 18px; color:#0d47a1; text-align:center;">
-      Confirm Payment
-    </h2>
+    <h2 style="text-align:center;color:#0d47a1;margin-bottom:18px">Confirm Payment</h2>
 
-    <div style="font-size:15px; line-height:1.7;">
-      <div style="margin-bottom:10px;"><strong>Payer:</strong><br><span id="cPayer"></span></div>
-      <div style="margin-bottom:10px;"><strong>Beneficiary:</strong><br><span id="cBeneficiary"></span></div>
-      <div style="margin-bottom:14px;"><strong>Purpose:</strong><br><span id="cPurpose"></span></div>
+    <div style="font-size:15px;line-height:1.8">
+      <div style="display:flex;justify-content:space-between"><b>Payer</b><span id="cPayer"></span></div>
+      <div style="display:flex;justify-content:space-between"><b>Mobile</b><span id="cMobile"></span></div>
+      <div style="display:flex;justify-content:space-between"><b>Beneficiary</b><span id="cBeneficiary"></span></div>
+      <div style="display:flex;justify-content:space-between"><b>Purpose</b><span id="cPurpose"></span></div>
 
-      <div style="margin-top:18px; padding:14px; background:#f1f6ff; border-radius:8px; text-align:center; font-size:20px; font-weight:700;">
-        ₹ <span id="cAmount"></span>
+      <div style="margin-top:18px;padding:14px;background:#f1f6ff;
+      display:flex;justify-content:space-between;font-size:18px;font-weight:700">
+        <span>Total</span>
+        <span>₹ <span id="cAmount"></span></span>
       </div>
     </div>
 
-    <button onclick="confirmPay()" style="background:#28a745;">Confirm & Pay</button>
-    <button onclick="closeConfirm()" style="background:#e0e0e0;color:#000;">Cancel</button>
+    <button onclick="confirmPay()" style="background:#28a745">Confirm & Pay</button>
+    <button onclick="closeConfirm()" style="background:#e0e0e0;color:#000">Cancel</button>
   </div>
 </div>
 
 <script>
-let finalAmount = 0;
+let finalAmount=0;
 
 function calculate(){
-  let amount = Number(document.getElementById("amount").value || 0);
-  let method = document.getElementById("method").value;
-  let fee = 0;
-  let text = "";
+  let amount=+amountInput.value||0;
+  let method=methodSelect.value;
+  let fee=0,msg="";
 
-  if(method === "credit"){
-    fee = amount * 0.025;
-    text = "Includes bank + platform processing charges (2.5%)";
-  } else if(method === "debit"){
-    fee = 20;
-    text = "Includes standard debit card processing fee";
-  } else {
-    text = "No additional charges applied";
-  }
-
-  finalAmount = amount + fee;
-  document.getElementById("feeText").innerText = text;
-  document.getElementById("totalPayable").innerText =
-    "Total Payable Amount: ₹" + finalAmount.toFixed(2);
+  if(method==="credit"){fee=amount*0.025;msg="2.5% card charges";}
+  else if(method==="debit"){fee=20;msg="₹20 debit card fee";}
+  else if(method==="upi"){msg="No extra charges";}
+  finalAmount=amount+fee;
+  feeText.innerText=msg;
+  totalPayable.innerText="Total Payable Amount: ₹"+finalAmount.toFixed(2);
 }
 
+const amountInput=amount,methodSelect=method;
+
 function openConfirm(){
-  let amount = Number(document.getElementById("amount").value);
-  if(!amount || amount < 1){
-    alert("Please enter a valid amount");
+  if(!payerName.value||!mobile.value||!beneficiary.value||!upi.value||
+     !purpose.value||!method.value||!amount.value){
+    alert("Please fill all mandatory fields");
+    return;
+  }
+  if(mobile.value.length!==10){
+    alert("Enter valid 10-digit mobile number");
     return;
   }
 
-  document.getElementById("cPayer").innerText =
-    document.getElementById("payerName").value || "Customer";
-  document.getElementById("cBeneficiary").innerText =
-    document.getElementById("beneficiary").value || "Beneficiary";
-  document.getElementById("cPurpose").innerText =
-    document.getElementById("purpose").value;
-  document.getElementById("cAmount").innerText =
-    finalAmount.toFixed(2);
+  cPayer.innerText=payerName.value;
+  cMobile.innerText=mobile.value;
+  cBeneficiary.innerText=beneficiary.value;
+  cPurpose.innerText=purpose.value;
+  cAmount.innerText=finalAmount.toFixed(2);
 
-  document.getElementById("confirmModal").style.display = "flex";
+  confirmModal.style.display="flex";
 }
 
-function closeConfirm(){
-  document.getElementById("confirmModal").style.display = "none";
-}
+function closeConfirm(){confirmModal.style.display="none";}
 
 function confirmPay(){
   closeConfirm();
-
-  let options = {
-    key: "rzp_live_S5dHw17cdqIxuk", // 🔴 replace with live key
-    amount: Math.round(finalAmount * 100),
-    currency: "INR",
-    name: "EasyRent Pay",
-    description: "Property Payment",
-    handler: function (response){
-      alert("Payment Successful!\nPayment ID: " + response.razorpay_payment_id);
-    },
-    theme: { color: "#0d47a1" }
-  };
-
-  new Razorpay(options).open();
+  new Razorpay({
+    key:"rzp_live_S5dHw17cdqIxuk",
+    amount:Math.round(finalAmount*100),
+    currency:"INR",
+    name:"EasyRent Pay",
+    description:"Property Payment",
+    handler:r=>alert("Payment Successful\nID: "+r.razorpay_payment_id)
+  }).open();
 }
 </script>
 
