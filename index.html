@@ -92,7 +92,14 @@ footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5
 
 </div>
 
-<footer>Payments processed via RBI-authorised partners</footer>
+<footer>
+<strong>Important Disclaimer</strong><br><br>
+EasyRent Pay is a payment facilitation platform only.<br>
+We do not provide credit, lending, or financial advisory services.<br>
+All payments are processed via RBI-authorised payment partners.<br>
+Settlement timelines depend on banks, card networks, and payment methods.<br><br>
+<span style="font-weight:600">Payments processed via RBI-authorised partners</span>
+</footer>
 
 <!-- CONFIRM MODAL -->
 <div id="confirmModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center">
@@ -142,6 +149,7 @@ if(!payerName.value||!mobile.value||!beneficiary.value||!purpose.value||!method.
 alert("Please fill all mandatory fields");return;
 }
 if(mobile.value.length!==10){alert("Invalid mobile number");return;}
+
 let payInfo="";
 if(receiveMethod.value==="upi"){
 if(!isUPI(upi.value)){alert("Invalid UPI ID");return;}
@@ -150,7 +158,7 @@ payInfo="UPI: "+upi.value;
 else if(receiveMethod.value==="bank"){
 if(!isAcc(account.value)||!isIFSC(ifsc.value)){alert("Invalid bank details");return;}
 payInfo="A/c: "+account.value+" | IFSC: "+ifsc.value;
-}else{alert("Select payment receive method");return;}
+}else{alert("Select UPI or Bank");return;}
 
 cPayer.innerText=payerName.value;
 cMobile.innerText=mobile.value;
@@ -166,13 +174,22 @@ function closeConfirm(){confirmModal.style.display="none";}
 
 function confirmPay(){
 closeConfirm();
+
+if("RAZORPAY_TEST_KEY_HERE".includes("HERE")){
+alert("⚠️ Razorpay key missing.\nUse TEST key from Razorpay dashboard.");
+return;
+}
+
 new Razorpay({
-key:"rzp_live_S5dHw17cdqIxuk",
+key:"rzp_live_S5dHw17cdqIxuk",   // 🔴 PUT YOUR TEST KEY HERE
 amount:Math.round(finalAmount*100),
 currency:"INR",
 name:"EasyRent Pay",
 description:"Property Payment",
-handler:r=>alert("Payment Successful\nID: "+r.razorpay_payment_id)
+handler:r=>alert("Payment Successful\nID: "+r.razorpay_payment_id),
+modal:{
+ondismiss:()=>alert("Payment cancelled by user")
+}
 }).open();
 }
 </script>
