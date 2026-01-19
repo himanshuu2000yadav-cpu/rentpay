@@ -17,6 +17,9 @@ header p{margin-top:6px;font-size:14px;opacity:.9}
 h2{margin-top:0;color:#0d47a1}
 label{display:block;margin:12px 0 6px;font-weight:600}
 input,select{width:100%;padding:12px;border-radius:6px;border:1px solid #ccc}
+.msg{font-size:13px;margin-top:4px}
+.valid{color:green}
+.invalid{color:red}
 .total{background:#e3f2fd;padding:15px;border-left:5px solid #0d47a1;font-size:18px;font-weight:700;margin-top:15px}
 button{width:100%;padding:15px;margin-top:20px;border:none;border-radius:8px;background:#1976d2;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
 button:hover{background:#0d47a1}
@@ -36,6 +39,7 @@ footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5
 <!-- PAYER -->
 <div class="card">
 <h2>Payer Details</h2>
+
 <label>Full Name *</label>
 <input id="payerName">
 
@@ -60,16 +64,23 @@ footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5
 <option value="bank">Bank Account</option>
 </select>
 
+<!-- UPI -->
 <div id="upiBox" style="display:none">
 <label>UPI ID *</label>
-<input id="upi" placeholder="example@bank">
+<input id="upi" placeholder="example@bank" oninput="validateUPI()">
+<div id="upiMsg" class="msg"></div>
 </div>
 
+<!-- BANK -->
 <div id="bankBox" style="display:none">
 <label>Account Number *</label>
-<input id="account">
+<input id="account" oninput="validateAccount()">
+<div id="accMsg" class="msg"></div>
+
 <label>IFSC Code *</label>
-<input id="ifsc" placeholder="SBIN0001234">
+<input id="ifsc" placeholder="SBIN0001234" oninput="validateIFSC()">
+<div id="ifscMsg" class="msg"></div>
+<div id="bankName" class="msg"></div>
 </div>
 
 <label>Purpose *</label>
@@ -81,7 +92,7 @@ footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5
 </select>
 </div>
 
-<!-- PAYMENT METHOD -->
+<!-- PAYMENT -->
 <div class="card">
 <h2>Payment Method *</h2>
 <select id="method" onchange="calculate()">
@@ -133,6 +144,7 @@ Settlement timelines depend on banks, card networks, and payment methods.<br><br
 <script>
 let finalAmount=0;
 
+/* ---------- CALCULATION ---------- */
 function calculate(){
 let amt=+amount.value||0,fee=0;
 if(method.value==="credit") fee=amt*0.025;
@@ -141,35 +153,64 @@ finalAmount=amt+fee;
 totalPayable.innerText="Total Payable: ₹"+finalAmount.toFixed(2);
 }
 
+/* ---------- TOGGLE ---------- */
 function toggleFields(){
 upiBox.style.display=receiveMethod.value==="upi"?"block":"none";
 bankBox.style.display=receiveMethod.value==="bank"?"block":"none";
 }
 
-const isUPI=u=>/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(u);
-const isIFSC=i=>/^[A-Z]{4}0[A-Z0-9]{6}$/.test(i);
-const isAcc=a=>/^[0-9]{9,18}$/.test(a);
+/* ---------- VALIDATION ---------- */
+function validateUPI(){
+if(!upi.value){upiMsg.innerHTML="";return;}
+if(/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi.value)){
+upiMsg.innerHTML="✔ UPI ID looks valid";upiMsg.className="msg valid";
+}else{
+upiMsg.innerHTML="✖ Invalid UPI ID";upiMsg.className="msg invalid";
+}
+}
 
+function validateAccount(){
+if(!account.value){accMsg.innerHTML="";return;}
+if(/^[0-9]{9,18}$/.test(account.value)){
+accMsg.innerHTML="✔ Account number looks valid";accMsg.className="msg valid";
+}else{
+accMsg.innerHTML="✖ Invalid account number";accMsg.className="msg invalid";
+}
+}
+
+function validateIFSC(){
+const v=ifsc.value.toUpperCase();
+if(!v){ifscMsg.innerHTML="";bankName.innerHTML="";return;}
+if(/^[A-Z]{4}0[A-Z0-9]{6}$/.test(v)){
+ifscMsg.innerHTML="✔ IFSC looks valid";ifscMsg.className="msg valid";
+const map={SBIN:"State Bank of India",HDFC:"HDFC Bank",ICIC:"ICICI Bank",AXIS:"Axis Bank",PUNB:"Punjab National Bank",BARB:"Bank of Baroda"};
+bankName.innerHTML="Bank: "+(map[v.substr(0,4)]||"Recognised Bank");
+}else{
+ifscMsg.innerHTML="✖ Invalid IFSC";ifscMsg.className="msg invalid";
+bankName.innerHTML="";
+}
+}
+
+/* ---------- CONFIRM ---------- */
 function openConfirm(){
 if(!payerName.value||!mobile.value||!beneficiary.value||!purpose.value||!method.value||!amount.value){
-alert("Please fill all mandatory fields");return;
-}
+alert("Please fill all mandatory fields");return;}
 if(mobile.value.length!==10){alert("Invalid mobile number");return;}
 
-let receiveInfo="";
+let receive="";
 if(receiveMethod.value==="upi"){
-if(!isUPI(upi.value)){alert("Invalid UPI ID");return;}
-receiveInfo="UPI: "+upi.value;
-}
-else if(receiveMethod.value==="bank"){
-if(!isAcc(account.value)||!isIFSC(ifsc.value)){alert("Invalid bank details");return;}
-receiveInfo="A/c: "+account.value+" | IFSC: "+ifsc.value;
-}else{alert("Select receive payment method");return;}
+if(!/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi.value)){alert("Invalid UPI ID");return;}
+receive="UPI: "+upi.value;
+}else if(receiveMethod.value==="bank"){
+if(!/^[0-9]{9,18}$/.test(account.value)||!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc.value)){
+alert("Invalid bank details");return;}
+receive="A/c: "+account.value+" | IFSC: "+ifsc.value;
+}else{alert("Select receive method");return;}
 
 cPayer.innerText=payerName.value;
 cMobile.innerText=mobile.value;
 cBeneficiary.innerText=beneficiary.value;
-cReceive.innerText=receiveInfo;
+cReceive.innerText=receive;
 cMethod.innerText=method.options[method.selectedIndex].text;
 cPurpose.innerText=purpose.value;
 cAmount.innerText=finalAmount.toFixed(2);
@@ -179,6 +220,7 @@ confirmModal.style.display="flex";
 
 function closeConfirm(){confirmModal.style.display="none";}
 
+/* ---------- PAYMENT ---------- */
 function confirmPay(){
 closeConfirm();
 new Razorpay({
