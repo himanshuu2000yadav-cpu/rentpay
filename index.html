@@ -33,7 +33,11 @@ header{
 
 h2{color:#0d47a1;margin-top:0}
 
-label{display:block;margin:12px 0 6px;font-weight:600}
+label{
+  display:block;
+  margin:12px 0 6px;
+  font-weight:600;
+}
 
 input,select{
   width:100%;
@@ -43,13 +47,12 @@ input,select{
   font-size:15px;
 }
 
-.total{
+.breakup{
   background:#e3f2fd;
   padding:15px;
   border-left:5px solid #0d47a1;
-  font-size:18px;
-  font-weight:700;
   margin-top:15px;
+  font-size:15px;
 }
 
 button{
@@ -91,6 +94,7 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
   padding:25px;
   border-radius:16px;
 }
+.modal-box h3{text-align:center;color:#1b5e20;margin-top:0}
 </style>
 </head>
 
@@ -106,10 +110,13 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
 <!-- PAYER -->
 <div class="card">
 <h2>Payer Details</h2>
-<label>Name *</label>
+
+<label>Payer Name *</label>
 <input id="payer">
+
 <label>Mobile *</label>
 <input id="mobile" maxlength="10">
+
 <label>Amount (₹) *</label>
 <input id="amount" type="number" oninput="updateTotal()">
 </div>
@@ -125,12 +132,12 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
 <select id="receiveVia" onchange="toggleReceive();updateTotal()">
   <option value="">Select</option>
   <option value="upi">UPI</option>
-  <option value="bank">Bank Account</option>
+  <option value="bank">Bank Transfer</option>
 </select>
 
 <div id="upiBox" style="display:none">
   <label>UPI ID *</label>
-  <input id="upi">
+  <input id="upi" placeholder="example@bank">
 </div>
 
 <div id="bankBox" style="display:none">
@@ -151,20 +158,26 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
 <!-- PAYMENT -->
 <div class="card">
 <h2>Payment</h2>
-<div class="total" id="total">Total: ₹0</div>
+
+<div class="breakup" id="breakup">
+  Amount: ₹0.00<br>
+  Charges: ₹0.00<br>
+  <strong>Total: ₹0.00</strong>
+</div>
+
 <button onclick="openConfirm()">Proceed to Pay</button>
 </div>
 
 </div>
 
 <footer>
-  <strong>Important Disclaimer</strong><br><br>
-  EasyRent Pay is a payment facilitation platform only.<br>
-  Payments processed via RBI-authorised partners.
-  <br><br>
-  <a href="privacy.html">Privacy Policy</a> |
-  <a href="terms.html">Terms & Conditions</a> |
-  <a href="refund.html">Refund Policy</a>
+<strong>Important Disclaimer</strong><br><br>
+EasyRent Pay is a payment facilitation platform only.<br>
+Payments processed via RBI-authorised partners.
+<br><br>
+<a href="privacy.html">Privacy Policy</a> |
+<a href="terms.html">Terms & Conditions</a> |
+<a href="refund.html">Refund Policy</a>
 </footer>
 
 <!-- CONFIRM MODAL -->
@@ -174,8 +187,9 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
     <p><b>Payer:</b> <span id="cPayer"></span></p>
     <p><b>Mobile:</b> <span id="cMobile"></span></p>
     <p><b>Beneficiary:</b> <span id="cBen"></span></p>
+    <p><b>Amount:</b> ₹<span id="cBase"></span></p>
     <p><b>Charges:</b> ₹<span id="cFee"></span></p>
-    <p><b>Total:</b> ₹<span id="cAmt"></span></p>
+    <p><b>Total:</b> ₹<span id="cTotal"></span></p>
 
     <button onclick="payNow()">Confirm & Pay</button>
     <button style="background:#ccc;color:#000" onclick="closeConfirm()">Cancel</button>
@@ -183,53 +197,84 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
 </div>
 
 <script>
+/* HELPERS */
 const maskMobile = m => m[0]+"******"+m.slice(-3);
+const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
+const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
 
+/* SHOW / HIDE */
 function toggleReceive(){
-  upiBox.style.display = receiveVia.value==="upi" ? "block":"none";
-  bankBox.style.display = receiveVia.value==="bank" ? "block":"none";
+  upiBox.style.display = receiveVia.value==="upi" ? "block" : "none";
+  bankBox.style.display = receiveVia.value==="bank" ? "block" : "none";
 }
 
+/* CHARGES */
+function calcCharges(amount){
+  if(method.value==="debit") return 20;
+  if(method.value==="credit") return amount * 0.025;
+  return 0;
+}
+
+/* LIVE TOTAL */
 function updateTotal(){
   let amt = Number(amount.value||0);
-  let fee = 0;
+  let fee = calcCharges(amt);
 
-  if(method.value==="debit") fee = 20;
-  if(method.value==="credit") fee = amt * 0.025;
-
-  total.innerText = "Total: ₹" + (amt + fee).toFixed(2);
+  breakup.innerHTML = `
+    Amount: ₹${amt.toFixed(2)}<br>
+    Charges: ₹${fee.toFixed(2)}<br>
+    <strong>Total: ₹${(amt+fee).toFixed(2)}</strong>
+  `;
 }
 
-function openConfirm(){
+/* VALIDATION */
+function validate(){
   if(!payer.value||!mobile.value||!beneficiary.value||!amount.value){
-    alert("Fill all required fields"); return;
-  }
-  if(receiveVia.value==="upi" && !upi.value){
-    alert("Enter UPI ID"); return;
-  }
-  if(receiveVia.value==="bank" && (!account.value||!ifsc.value)){
-    alert("Enter bank details"); return;
+    alert("Please fill all required fields"); return false;
   }
 
+  if(receiveVia.value==="upi"){
+    if(!upiRegex.test(upi.value)){
+      alert("Invalid UPI ID"); return false;
+    }
+  }
+
+  if(receiveVia.value==="bank"){
+    if(account.value.length < 9){
+      alert("Invalid Account Number"); return false;
+    }
+    if(!ifscRegex.test(ifsc.value.toUpperCase())){
+      alert("Invalid IFSC Code"); return false;
+    }
+  }
+  return true;
+}
+
+/* CONFIRM */
+function openConfirm(){
+  if(!validate()) return;
+
   let amt = Number(amount.value);
-  let fee = method.value==="debit" ? 20 : method.value==="credit" ? amt*0.025 : 0;
+  let fee = calcCharges(amt);
 
   cPayer.innerText = payer.value;
   cMobile.innerText = maskMobile(mobile.value);
   cBen.innerText = beneficiary.value;
+  cBase.innerText = amt.toFixed(2);
   cFee.innerText = fee.toFixed(2);
-  cAmt.innerText = (amt + fee).toFixed(2);
+  cTotal.innerText = (amt+fee).toFixed(2);
 
   confirmModal.style.display="flex";
 }
 
 function closeConfirm(){ confirmModal.style.display="none"; }
 
+/* PAY */
 function payNow(){
   closeConfirm();
   new Razorpay({
     key:"rzp_live_S5dHw17cdqIxuk",
-    amount:(Number(cAmt.innerText)*100),
+    amount:Number(cTotal.innerText)*100,
     currency:"INR",
     handler:()=>alert("Payment Successful")
   }).open();
