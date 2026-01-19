@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <title>EasyRent Pay</title>
@@ -7,77 +7,183 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
-body{font-family:Arial;background:#f4f8ff;margin:0}
-.box{max-width:400px;margin:40px auto;background:#fff;padding:25px;border-radius:12px}
-label{display:block;margin-top:12px;font-weight:600}
-input{width:100%;padding:10px;margin-top:5px}
-button{width:100%;margin-top:20px;padding:12px;background:#1976d2;color:#fff;border:none;border-radius:8px;font-size:16px}
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:#f4f8ff;color:#222}
+
+header{
+  background:#0d47a1;
+  color:#fff;
+  padding:22px;
+  text-align:center;
+}
+
+.container{
+  max-width:900px;
+  margin:30px auto;
+  padding:0 15px;
+}
+
+.card{
+  background:#fff;
+  border-radius:12px;
+  padding:20px;
+  margin-bottom:25px;
+  box-shadow:0 4px 12px rgba(0,0,0,.08);
+}
+
+h2{color:#0d47a1;margin-top:0}
+
+label{
+  display:block;
+  margin:12px 0 6px;
+  font-weight:600;
+}
+
+input,select{
+  width:100%;
+  padding:12px;
+  border-radius:6px;
+  border:1px solid #ccc;
+}
+
+.total{
+  background:#e3f2fd;
+  padding:15px;
+  border-left:5px solid #0d47a1;
+  font-size:18px;
+  font-weight:700;
+  margin-top:15px;
+}
+
+button{
+  width:100%;
+  padding:15px;
+  margin-top:20px;
+  border:none;
+  border-radius:8px;
+  background:#1976d2;
+  color:#fff;
+  font-size:18px;
+  font-weight:700;
+  cursor:pointer;
+}
+button:hover{background:#0d47a1}
+
+footer{
+  text-align:center;
+  font-size:12px;
+  color:#444;
+  padding:25px;
+  background:#f1f5ff;
+}
+
+/* CONFIRM MODAL */
+.modal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.6);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  z-index:9999;
+}
+.modal-box{
+  background:#fff;
+  width:90%;
+  max-width:420px;
+  padding:25px;
+  border-radius:16px;
+}
+.modal-box h3{text-align:center;color:#1b5e20}
+.modal-box p{margin:6px 0}
 </style>
 </head>
 
 <body>
 
-<div class="box">
-<h2>EasyRent Pay</h2>
+<header>
+  <h1>🏠 EasyRent Pay</h1>
+  <p>Secure Property Payments</p>
+</header>
 
-<label>Payer Name</label>
+<div class="container">
+
+<div class="card">
+<h2>Payer Details</h2>
+<label>Name *</label>
 <input id="payer">
-
-<label>Mobile</label>
+<label>Mobile *</label>
 <input id="mobile">
-
-<label>Beneficiary</label>
-<input id="beneficiary">
-
-<label>Amount (₹)</label>
+<label>Amount (₹) *</label>
 <input id="amount">
+</div>
 
-<button onclick="pay()">Pay Now</button>
+<div class="card">
+<h2>Beneficiary Details</h2>
+<label>Beneficiary Name *</label>
+<input id="beneficiary">
+<label>Purpose *</label>
+<select id="purpose">
+  <option>Rent</option>
+  <option>Maintenance</option>
+</select>
+</div>
+
+<div class="card">
+<h2>Payment</h2>
+<div class="total" id="total">Total: ₹0</div>
+<button onclick="openConfirm()">Proceed to Pay</button>
+</div>
+
+</div>
+
+<footer>
+<strong>Important Disclaimer</strong><br><br>
+EasyRent Pay is a payment facilitation platform only.<br>
+Payments processed via RBI-authorised partners.
+</footer>
+
+<!-- CONFIRM MODAL -->
+<div class="modal" id="confirmModal">
+  <div class="modal-box">
+    <h3>Confirm Payment</h3>
+    <p><b>Payer:</b> <span id="cPayer"></span></p>
+    <p><b>Mobile:</b> <span id="cMobile"></span></p>
+    <p><b>Beneficiary:</b> <span id="cBen"></span></p>
+    <p><b>Total:</b> ₹<span id="cAmt"></span></p>
+
+    <button onclick="payNow()">Confirm & Pay</button>
+    <button style="background:#ccc;color:#000" onclick="closeConfirm()">Cancel</button>
+  </div>
 </div>
 
 <script>
-function pay(){
-  const amount = Number(amount.value);
-  fetch("http://localhost:5000/create-order", {
-    method:"POST",
-    headers:{ "Content-Type":"application/json" },
-    body:JSON.stringify({ amount })
-  })
-  .then(res=>res.json())
-  .then(order=>{
-    const options = {
-      key: "rzp_live_S5dHw17cdqIxuk
-",
-      amount: order.amount,
-      currency: "INR",
-      order_id: order.id,
-      handler: function (response) {
+const maskMobile = m => m[0]+"******"+m.slice(-3);
 
-        fetch("http://localhost:5000/verify-payment", {
-          method:"POST",
-          headers:{ "Content-Type":"application/json" },
-          body: JSON.stringify({
-            razorpay_order_id: response.razorpay_order_id,
-            razorpay_payment_id: response.razorpay_payment_id,
-            razorpay_signature: response.razorpay_signature,
-            payer: payer.value,
-            mobile: mobile.value,
-            beneficiary: beneficiary.value,
-            amount: amount.value
-          })
-        })
-        .then(r=>r.json())
-        .then(data=>{
-          if(data.status==="success"){
-            window.open("http://localhost:5000"+data.receiptUrl,"_blank");
-          }else{
-            alert("Verification failed");
-          }
-        });
-      }
-    };
-    new Razorpay(options).open();
-  });
+function openConfirm(){
+  if(!payer.value||!mobile.value||!amount.value||!beneficiary.value){
+    alert("Fill all fields"); return;
+  }
+  cPayer.innerText=payer.value;
+  cMobile.innerText=maskMobile(mobile.value);
+  cBen.innerText=beneficiary.value;
+  cAmt.innerText=amount.value;
+  total.innerText="Total: ₹"+amount.value;
+  confirmModal.style.display="flex";
+}
+
+function closeConfirm(){
+  confirmModal.style.display="none";
+}
+
+function payNow(){
+  closeConfirm();
+  new Razorpay({
+    key:"rzp_live_S5dHw17cdqIxuk",
+    amount:amount.value*100,
+    currency:"INR",
+    handler:()=>alert("Payment Successful (Demo)")
+  }).open();
 }
 </script>
 
