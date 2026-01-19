@@ -10,19 +10,22 @@
 *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 body{margin:0;background:#f4f8ff;color:#222}
 
+/* HEADER */
 header{
   background:#0d47a1;
   color:#fff;
   padding:22px;
   text-align:center;
 }
+header h1{margin:0}
+header p{margin:6px 0 0;font-size:14px;opacity:.9}
 
+/* LAYOUT */
 .container{
   max-width:900px;
   margin:30px auto;
   padding:0 15px;
 }
-
 .card{
   background:#fff;
   border-radius:12px;
@@ -30,22 +33,23 @@ header{
   margin-bottom:25px;
   box-shadow:0 4px 12px rgba(0,0,0,.08);
 }
-
 h2{color:#0d47a1;margin-top:0}
 
+/* FORM */
 label{
   display:block;
   margin:12px 0 6px;
   font-weight:600;
 }
-
 input,select{
   width:100%;
   padding:12px;
   border-radius:6px;
   border:1px solid #ccc;
+  font-size:15px;
 }
 
+/* TOTAL */
 .total{
   background:#e3f2fd;
   padding:15px;
@@ -55,6 +59,7 @@ input,select{
   margin-top:15px;
 }
 
+/* BUTTON */
 button{
   width:100%;
   padding:15px;
@@ -69,15 +74,22 @@ button{
 }
 button:hover{background:#0d47a1}
 
+/* FOOTER */
 footer{
   text-align:center;
   font-size:12px;
   color:#444;
-  padding:25px;
+  padding:25px 15px;
   background:#f1f5ff;
 }
+footer a{
+  color:#0d47a1;
+  text-decoration:none;
+  margin:0 5px;
+}
+footer a:hover{text-decoration:underline}
 
-/* CONFIRM MODAL */
+/* MODAL */
 .modal{
   position:fixed;
   inset:0;
@@ -94,8 +106,16 @@ footer{
   padding:25px;
   border-radius:16px;
 }
-.modal-box h3{text-align:center;color:#1b5e20}
+.modal-box h3{
+  text-align:center;
+  color:#1b5e20;
+  margin-top:0;
+}
 .modal-box p{margin:6px 0}
+.modal-box .cancel{
+  background:#ccc;
+  color:#000;
+}
 </style>
 </head>
 
@@ -108,81 +128,138 @@ footer{
 
 <div class="container">
 
+<!-- PAYER DETAILS -->
 <div class="card">
-<h2>Payer Details</h2>
-<label>Name *</label>
-<input id="payer">
-<label>Mobile *</label>
-<input id="mobile">
-<label>Amount (₹) *</label>
-<input id="amount">
+  <h2>Payer Details</h2>
+
+  <label>Payer Name *</label>
+  <input id="payer">
+
+  <label>Mobile *</label>
+  <input id="mobile" maxlength="10">
+
+  <label>Amount (₹) *</label>
+  <input id="amount" type="number">
 </div>
 
+<!-- BENEFICIARY DETAILS -->
 <div class="card">
-<h2>Beneficiary Details</h2>
-<label>Beneficiary Name *</label>
-<input id="beneficiary">
-<label>Purpose *</label>
-<select id="purpose">
-  <option>Rent</option>
-  <option>Maintenance</option>
-</select>
+  <h2>Beneficiary Details</h2>
+
+  <label>Beneficiary Name *</label>
+  <input id="beneficiary">
+
+  <label>Receive Payment Via *</label>
+  <select id="receiveVia" onchange="toggleReceive()">
+    <option value="">Select</option>
+    <option value="upi">UPI ID</option>
+    <option value="bank">Bank Account</option>
+  </select>
+
+  <div id="upiBox" style="display:none">
+    <label>UPI ID *</label>
+    <input id="upi">
+  </div>
+
+  <div id="bankBox" style="display:none">
+    <label>Account Number *</label>
+    <input id="account">
+    <label>IFSC *</label>
+    <input id="ifsc">
+  </div>
+
+  <label>Purpose *</label>
+  <select id="purpose">
+    <option>Rent</option>
+    <option>Maintenance</option>
+  </select>
 </div>
 
+<!-- PAYMENT -->
 <div class="card">
-<h2>Payment</h2>
-<div class="total" id="total">Total: ₹0</div>
-<button onclick="openConfirm()">Proceed to Pay</button>
+  <h2>Payment</h2>
+  <div class="total" id="total">Total: ₹0</div>
+  <button onclick="openConfirm()">Proceed to Pay</button>
 </div>
 
 </div>
 
 <footer>
-<strong>Important Disclaimer</strong><br><br>
-EasyRent Pay is a payment facilitation platform only.<br>
-Payments processed via RBI-authorised partners.
+  <strong>Important Disclaimer</strong><br><br>
+  EasyRent Pay is a payment facilitation platform only.<br>
+  Payments are processed via RBI-authorised partners.
+  <br><br>
+  <a href="privacy.html">Privacy Policy</a> |
+  <a href="terms.html">Terms & Conditions</a> |
+  <a href="refund.html">Refund Policy</a>
 </footer>
 
-<!-- CONFIRM MODAL -->
+<!-- CONFIRM PAYMENT MODAL -->
 <div class="modal" id="confirmModal">
   <div class="modal-box">
     <h3>Confirm Payment</h3>
     <p><b>Payer:</b> <span id="cPayer"></span></p>
     <p><b>Mobile:</b> <span id="cMobile"></span></p>
     <p><b>Beneficiary:</b> <span id="cBen"></span></p>
+    <p><b>Receive Via:</b> <span id="cReceive"></span></p>
     <p><b>Total:</b> ₹<span id="cAmt"></span></p>
 
     <button onclick="payNow()">Confirm & Pay</button>
-    <button style="background:#ccc;color:#000" onclick="closeConfirm()">Cancel</button>
+    <button class="cancel" onclick="closeConfirm()">Cancel</button>
   </div>
 </div>
 
 <script>
-const maskMobile = m => m[0]+"******"+m.slice(-3);
+/* HELPERS */
+const maskMobile = m => m[0] + "******" + m.slice(-3);
 
+/* SHOW / HIDE UPI & BANK */
+function toggleReceive(){
+  upiBox.style.display = receiveVia.value==="upi" ? "block" : "none";
+  bankBox.style.display = receiveVia.value==="bank" ? "block" : "none";
+}
+
+/* OPEN CONFIRM */
 function openConfirm(){
-  if(!payer.value||!mobile.value||!amount.value||!beneficiary.value){
-    alert("Fill all fields"); return;
+  if(!payer.value || !mobile.value || !amount.value || !beneficiary.value || !receiveVia.value){
+    alert("Please fill all required fields");
+    return;
   }
-  cPayer.innerText=payer.value;
-  cMobile.innerText=maskMobile(mobile.value);
-  cBen.innerText=beneficiary.value;
-  cAmt.innerText=amount.value;
-  total.innerText="Total: ₹"+amount.value;
+
+  let receiveText="";
+  if(receiveVia.value==="upi"){
+    if(!upi.value){ alert("Enter UPI ID"); return; }
+    receiveText="UPI ID";
+  }else{
+    if(!account.value || !ifsc.value){ alert("Enter bank details"); return; }
+    receiveText="Bank Account";
+  }
+
+  cPayer.innerText = payer.value;
+  cMobile.innerText = maskMobile(mobile.value);
+  cBen.innerText = beneficiary.value;
+  cReceive.innerText = receiveText;
+  cAmt.innerText = amount.value;
+  total.innerText = "Total: ₹" + amount.value;
+
   confirmModal.style.display="flex";
 }
 
+/* CLOSE CONFIRM */
 function closeConfirm(){
   confirmModal.style.display="none";
 }
 
+/* PAY NOW (DEMO / LIVE READY) */
 function payNow(){
   closeConfirm();
   new Razorpay({
-    key:"rzp_live_S5dHw17cdqIxuk",
-    amount:amount.value*100,
-    currency:"INR",
-    handler:()=>alert("Payment Successful (Demo)")
+    key: "rzp_live_S5dHw17cdqIxuk",
+    amount: amount.value * 100,
+    currency: "INR",
+    handler: function(){
+      alert("Payment Successful");
+    }
   }).open();
 }
 </script>
