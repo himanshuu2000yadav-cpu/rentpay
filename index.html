@@ -1,196 +1,179 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>EasyRent Pay – Smart Property Payment Platform</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>EasyRent Pay – Smart Property Payment Platform</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Razorpay -->
-  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-  <style>
-    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-    body{margin:0;background:#f4f8ff;color:#222}
-
-    header{
-      background:#0d47a1;
-      color:#fff;
-      padding:22px;
-      text-align:center;
-    }
-    header h1{margin:0;font-size:26px}
-    header p{margin-top:6px;font-size:14px;opacity:.9}
-
-    .container{max-width:900px;margin:30px auto;padding:0 15px}
-    .card{
-      background:#fff;border-radius:10px;padding:20px;
-      margin-bottom:25px;box-shadow:0 4px 12px rgba(0,0,0,.08)
-    }
-    h2{margin-top:0;color:#0d47a1;font-size:20px}
-    label{display:block;margin:12px 0 6px;font-weight:600;font-size:14px}
-    input,select{
-      width:100%;padding:12px;border-radius:6px;
-      border:1px solid #ccc;font-size:15px
-    }
-    .info{font-size:13px;margin-top:8px;color:#555}
-    .total{
-      background:#e3f2fd;padding:15px;border-left:5px solid #0d47a1;
-      font-size:18px;font-weight:700;margin-top:15px
-    }
-    button{
-      width:100%;padding:15px;margin-top:20px;
-      border:none;border-radius:8px;background:#1976d2;
-      color:#fff;font-size:18px;font-weight:700;cursor:pointer
-    }
-    button:hover{background:#0d47a1}
-
-    footer{
-      text-align:center;font-size:12px;color:#444;
-      padding:25px 15px;background:#f1f5ff
-    }
-  </style>
+<style>
+*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+body{margin:0;background:#f4f8ff;color:#222}
+header{background:#0d47a1;color:#fff;padding:22px;text-align:center}
+header h1{margin:0;font-size:26px}
+header p{margin-top:6px;font-size:14px;opacity:.9}
+.container{max-width:900px;margin:30px auto;padding:0 15px}
+.card{background:#fff;border-radius:10px;padding:20px;margin-bottom:25px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+h2{margin-top:0;color:#0d47a1}
+label{display:block;margin:12px 0 6px;font-weight:600}
+input,select{width:100%;padding:12px;border-radius:6px;border:1px solid #ccc}
+.total{background:#e3f2fd;padding:15px;border-left:5px solid #0d47a1;font-size:18px;font-weight:700;margin-top:15px}
+button{width:100%;padding:15px;margin-top:20px;border:none;border-radius:8px;background:#1976d2;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
+button:hover{background:#0d47a1}
+footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5ff}
+</style>
 </head>
 
 <body>
 
 <header>
-  <h1>🏠 EasyRent Pay</h1>
-  <p>Secure Property Payments via UPI, Bank Transfer & Cards</p>
+<h1>🏠 EasyRent Pay</h1>
+<p>Secure Property Payments via UPI & Bank Transfer</p>
 </header>
 
 <div class="container">
 
-  <!-- PAYER -->
-  <div class="card">
-    <h2>Payer Details</h2>
-
-    <label>Full Name *</label>
-    <input type="text" id="payerName">
-
-    <label>Mobile Number *</label>
-    <input type="tel" id="mobile" placeholder="10-digit mobile number">
-
-    <label>Payment Amount (₹) *</label>
-    <input type="number" id="amount" oninput="calculate()">
-  </div>
-
-  <!-- BENEFICIARY -->
-  <div class="card">
-    <h2>Beneficiary Details</h2>
-
-    <label>Beneficiary Name *</label>
-    <input type="text" id="beneficiary">
-
-    <label>UPI ID / Bank Details *</label>
-    <input type="text" id="upi">
-
-    <label>Purpose of Payment *</label>
-    <select id="purpose">
-      <option value="">Select</option>
-      <option>Rent</option>
-      <option>Maintenance</option>
-      <option>Housing Charges</option>
-      <option>Other Property Charges</option>
-    </select>
-  </div>
-
-  <!-- PAYMENT -->
-  <div class="card">
-    <h2>Select Payment Method *</h2>
-
-    <select id="method" onchange="calculate()">
-      <option value="">Select</option>
-      <option value="upi">UPI / Bank Transfer</option>
-      <option value="debit">Debit Card (+₹20)</option>
-      <option value="credit">Credit Card (+2.5%)</option>
-    </select>
-
-    <div class="info" id="feeText"></div>
-    <div class="total" id="totalPayable">Total Payable Amount: ₹0</div>
-
-    <button onclick="openConfirm()">Proceed to Pay</button>
-  </div>
+<div class="card">
+<h2>Payer Details</h2>
+<label>Full Name *</label>
+<input id="payerName">
+<label>Mobile Number *</label>
+<input id="mobile" placeholder="10-digit number">
+<label>Amount (₹) *</label>
+<input id="amount" type="number" oninput="calculate()">
 </div>
 
-<footer>
-  Payments processed via RBI-authorised partners only.
-</footer>
+<div class="card">
+<h2>Beneficiary Details</h2>
+<label>Beneficiary Name *</label>
+<input id="beneficiary">
+
+<label>Receive Payment Via *</label>
+<select id="receiveMethod" onchange="toggleFields()">
+<option value="">Select</option>
+<option value="upi">UPI ID</option>
+<option value="bank">Bank Account</option>
+</select>
+
+<div id="upiBox" style="display:none">
+<label>UPI ID *</label>
+<input id="upi" placeholder="example@bank">
+</div>
+
+<div id="bankBox" style="display:none">
+<label>Account Number *</label>
+<input id="account">
+<label>IFSC Code *</label>
+<input id="ifsc" placeholder="SBIN0001234">
+</div>
+
+<label>Purpose *</label>
+<select id="purpose">
+<option value="">Select</option>
+<option>Rent</option>
+<option>Maintenance</option>
+<option>Housing Charges</option>
+</select>
+</div>
+
+<div class="card">
+<h2>Payment Method *</h2>
+<select id="method" onchange="calculate()">
+<option value="">Select</option>
+<option value="upi">UPI (No charges)</option>
+<option value="debit">Debit Card (+₹20)</option>
+<option value="credit">Credit Card (+2.5%)</option>
+</select>
+
+<div class="total" id="totalPayable">Total Payable: ₹0</div>
+<button onclick="openConfirm()">Proceed to Pay</button>
+</div>
+
+</div>
+
+<footer>Payments processed via RBI-authorised partners</footer>
 
 <!-- CONFIRM MODAL -->
-<div id="confirmModal" style="display:none;position:fixed;inset:0;
-background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center">
-  <div style="background:#fff;width:90%;max-width:440px;border-radius:14px;padding:28px">
+<div id="confirmModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center">
+<div style="background:#fff;width:90%;max-width:440px;border-radius:14px;padding:28px">
 
-    <h2 style="text-align:center;color:#0d47a1;margin-bottom:18px">Confirm Payment</h2>
+<h2 style="text-align:center;color:#0d47a1">Confirm Payment</h2>
 
-    <div style="font-size:15px;line-height:1.8">
-      <div style="display:flex;justify-content:space-between"><b>Payer</b><span id="cPayer"></span></div>
-      <div style="display:flex;justify-content:space-between"><b>Mobile</b><span id="cMobile"></span></div>
-      <div style="display:flex;justify-content:space-between"><b>Beneficiary</b><span id="cBeneficiary"></span></div>
-      <div style="display:flex;justify-content:space-between"><b>Purpose</b><span id="cPurpose"></span></div>
+<div style="line-height:1.8">
+<div style="display:flex;justify-content:space-between"><b>Payer</b><span id="cPayer"></span></div>
+<div style="display:flex;justify-content:space-between"><b>Mobile</b><span id="cMobile"></span></div>
+<div style="display:flex;justify-content:space-between"><b>Beneficiary</b><span id="cBeneficiary"></span></div>
+<div style="display:flex;justify-content:space-between"><b>Purpose</b><span id="cPurpose"></span></div>
+<div style="display:flex;justify-content:space-between"><b>Payment Details</b><span id="cPayDetail"></span></div>
 
-      <div style="margin-top:18px;padding:14px;background:#f1f6ff;
-      display:flex;justify-content:space-between;font-size:18px;font-weight:700">
-        <span>Total</span>
-        <span>₹ <span id="cAmount"></span></span>
-      </div>
-    </div>
+<div style="margin-top:15px;padding:12px;background:#f1f6ff;display:flex;justify-content:space-between;font-size:18px;font-weight:700">
+<span>Total</span><span>₹ <span id="cAmount"></span></span>
+</div>
+</div>
 
-    <button onclick="confirmPay()" style="background:#28a745">Confirm & Pay</button>
-    <button onclick="closeConfirm()" style="background:#e0e0e0;color:#000">Cancel</button>
-  </div>
+<button onclick="confirmPay()" style="background:#28a745">Confirm & Pay</button>
+<button onclick="closeConfirm()" style="background:#e0e0e0;color:#000">Cancel</button>
+</div>
 </div>
 
 <script>
 let finalAmount=0;
 
 function calculate(){
-  let amount=+amountInput.value||0;
-  let method=methodSelect.value;
-  let fee=0,msg="";
-
-  if(method==="credit"){fee=amount*0.025;msg="2.5% card charges";}
-  else if(method==="debit"){fee=20;msg="₹20 debit card fee";}
-  else if(method==="upi"){msg="No extra charges";}
-  finalAmount=amount+fee;
-  feeText.innerText=msg;
-  totalPayable.innerText="Total Payable Amount: ₹"+finalAmount.toFixed(2);
+let amt=+amount.value||0,fee=0;
+if(method.value==="credit") fee=amt*0.025;
+if(method.value==="debit") fee=20;
+finalAmount=amt+fee;
+totalPayable.innerText="Total Payable: ₹"+finalAmount.toFixed(2);
 }
 
-const amountInput=amount,methodSelect=method;
+function toggleFields(){
+upiBox.style.display=receiveMethod.value==="upi"?"block":"none";
+bankBox.style.display=receiveMethod.value==="bank"?"block":"none";
+}
+
+const isUPI=u=>/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(u);
+const isIFSC=i=>/^[A-Z]{4}0[A-Z0-9]{6}$/.test(i);
+const isAcc=a=>/^[0-9]{9,18}$/.test(a);
 
 function openConfirm(){
-  if(!payerName.value||!mobile.value||!beneficiary.value||!upi.value||
-     !purpose.value||!method.value||!amount.value){
-    alert("Please fill all mandatory fields");
-    return;
-  }
-  if(mobile.value.length!==10){
-    alert("Enter valid 10-digit mobile number");
-    return;
-  }
+if(!payerName.value||!mobile.value||!beneficiary.value||!purpose.value||!method.value||!amount.value){
+alert("Please fill all mandatory fields");return;
+}
+if(mobile.value.length!==10){alert("Invalid mobile number");return;}
+let payInfo="";
+if(receiveMethod.value==="upi"){
+if(!isUPI(upi.value)){alert("Invalid UPI ID");return;}
+payInfo="UPI: "+upi.value;
+}
+else if(receiveMethod.value==="bank"){
+if(!isAcc(account.value)||!isIFSC(ifsc.value)){alert("Invalid bank details");return;}
+payInfo="A/c: "+account.value+" | IFSC: "+ifsc.value;
+}else{alert("Select payment receive method");return;}
 
-  cPayer.innerText=payerName.value;
-  cMobile.innerText=mobile.value;
-  cBeneficiary.innerText=beneficiary.value;
-  cPurpose.innerText=purpose.value;
-  cAmount.innerText=finalAmount.toFixed(2);
+cPayer.innerText=payerName.value;
+cMobile.innerText=mobile.value;
+cBeneficiary.innerText=beneficiary.value;
+cPurpose.innerText=purpose.value;
+cPayDetail.innerText=payInfo;
+cAmount.innerText=finalAmount.toFixed(2);
 
-  confirmModal.style.display="flex";
+confirmModal.style.display="flex";
 }
 
 function closeConfirm(){confirmModal.style.display="none";}
 
 function confirmPay(){
-  closeConfirm();
-  new Razorpay({
-    key:"rzp_live_S5dHw17cdqIxuk",
-    amount:Math.round(finalAmount*100),
-    currency:"INR",
-    name:"EasyRent Pay",
-    description:"Property Payment",
-    handler:r=>alert("Payment Successful\nID: "+r.razorpay_payment_id)
-  }).open();
+closeConfirm();
+new Razorpay({
+key:"RAZORPAY_KEY_ID_HERE",
+amount:Math.round(finalAmount*100),
+currency:"INR",
+name:"EasyRent Pay",
+description:"Property Payment",
+handler:r=>alert("Payment Successful\nID: "+r.razorpay_payment_id)
+}).open();
 }
 </script>
 
