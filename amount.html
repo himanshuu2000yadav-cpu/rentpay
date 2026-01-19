@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>EasyRent Pay – Enter Amount</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body{font-family:Arial;background:#f4f8ff}
+    .box{
+      max-width:400px;
+      margin:100px auto;
+      background:#fff;
+      padding:25px;
+      border-radius:10px;
+      box-shadow:0 5px 15px rgba(0,0,0,.1)
+    }
+    h2{text-align:center;color:#0d47a1}
+    input,button{
+      width:100%;
+      padding:14px;
+      margin-top:15px;
+      font-size:16px
+    }
+    button{
+      background:#1976d2;
+      color:#fff;
+      border:none;
+      border-radius:6px;
+      cursor:pointer
+    }
+  </style>
+</head>
+
+<body>
+
+<div class="box">
+  <h2>Enter Rent Amount</h2>
+
+  <input type="number" id="amt" placeholder="Enter amount (₹)" />
+
+  <button onclick="goNext()">Continue</button>
+</div>
+
+<script>
+function goNext(){
+  let amt = document.getElementById("amt").value;
+  if(!amt || amt<=0){
+    alert("Please enter valid amount");
+    return;
+  }
+  window.location.href = "details.html?amount=" + amt;
+}
+</script>
+
+</body>
+</html>
