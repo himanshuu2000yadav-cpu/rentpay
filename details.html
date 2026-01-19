@@ -1,19 +1,68 @@
-<button onclick="goPay()">Pay Now</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Rent Payment</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<script>
-function goPay(){
-  let amount = new URLSearchParams(window.location.search).get("amount");
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f7f7f7;
+      margin: 0;
+      padding: 0;
+    }
 
-  if(!amount){
-    alert("Invalid amount");
-    return;
-  }
+    .container {
+      max-width: 400px;
+      margin: 60px auto;
+      background: #ffffff;
+      padding: 20px;
+      border-radius: 6px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      text-align: center;
+    }
 
-  // Razorpay payment link (fixed)
-  let link = "https://rzp.io/i/RENTPAY";
+    h2 {
+      margin-bottom: 10px;
+    }
 
-  alert("You will be redirected to secure payment page");
+    .amount {
+      font-size: 26px;
+      font-weight: bold;
+      margin: 20px 0;
+    }
 
-  window.open(link, "_blank");
-}
-</script>
+    button {
+      padding: 12px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+    <h2>Rent Payment</h2>
+    <div class="amount" id="amount">₹ 0</div>
+    <button onclick="payNow()">Pay Now</button>
+  </div>
+
+  <script>
+    // URL se amount lena
+    const params = new URLSearchParams(window.location.search);
+    const amount = params.get("amount");
+
+    if (amount) {
+      document.getElementById("amount").innerText = "₹ " + amount;
+    }
+
+    function payNow() {
+      alert("Payment Amount: ₹ " + (amount || 0));
+      // yahan future me Razorpay / PhonePe / UPI add kar sakta hai
+    }
+  </script>
+
+</body>
+</html>
