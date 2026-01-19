@@ -173,26 +173,36 @@ confirmModal.style.display="flex";
 function closeConfirm(){confirmModal.style.display="none";}
 
 function confirmPay(){
-closeConfirm();
+  closeConfirm();
 
-if("RAZORPAY_TEST_KEY_HERE".includes("HERE")){
-alert("⚠️ Razorpay key missing.\nUse TEST key from Razorpay dashboard.");
-return;
-}
+  const options = {
+    key: "rzp_live_S5dHw17cdqIxuk", // 🔴 APNI LIVE KEY
+    amount: Math.round(finalAmount * 100),
+    currency: "INR",
+    name: "EasyRent Pay",
+    description: "Property Payment",
 
-new Razorpay({
-key:"rzp_live_S5dHw17cdqIxuk",   // 🔴 PUT YOUR TEST KEY HERE
-amount:Math.round(finalAmount*100),
-currency:"INR",
-name:"EasyRent Pay",
-description:"Property Payment",
-handler:r=>alert("Payment Successful\nID: "+r.razorpay_payment_id),
-modal:{
-ondismiss:()=>alert("Payment cancelled by user")
-}
-}).open();
-}
-</script>
+    handler: function (response){
+      alert(
+        "Payment Successful ✅\n\n" +
+        "Payment ID: " + response.razorpay_payment_id
+      );
+    },
 
-</body>
-</html>
+    modal: {
+      ondismiss: function () {
+        alert("Payment cancelled by user");
+      }
+    }
+  };
+
+  try {
+    const rzp = new Razorpay(options);
+    rzp.open();
+  } catch (e) {
+    alert(
+      "Payment could not be processed right now.\n" +
+      "Please try again after some time."
+    );
+  }
+}
