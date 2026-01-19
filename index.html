@@ -7,69 +7,87 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+*{box-sizing:border-box;font-family:Inter,Arial,Helvetica,sans-serif}
 body{margin:0;background:#f4f8ff;color:#222}
 
+/* ===== HEADER ===== */
 header{
-  background:#0d47a1;
+  background:linear-gradient(135deg,#0d47a1,#1976d2);
   color:#fff;
-  padding:22px;
+  padding:28px 15px;
   text-align:center;
 }
+header .logo{
+  font-size:28px;
+  font-weight:800;
+  letter-spacing:.5px;
+}
+header .logo span{font-size:30px;margin-right:6px}
+header p{
+  margin:6px 0 0;
+  font-size:14px;
+  opacity:.9;
+}
 
+/* ===== LAYOUT ===== */
 .container{
   max-width:900px;
   margin:30px auto;
   padding:0 15px;
 }
-
 .card{
   background:#fff;
-  border-radius:12px;
-  padding:20px;
+  border-radius:16px;
+  padding:22px;
   margin-bottom:25px;
-  box-shadow:0 4px 12px rgba(0,0,0,.08);
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+}
+h2{
+  color:#0d47a1;
+  margin-top:0;
+  font-size:20px;
 }
 
-h2{color:#0d47a1;margin-top:0}
-
+/* ===== FORM ===== */
 label{
   display:block;
-  margin:12px 0 6px;
+  margin:14px 0 6px;
   font-weight:600;
 }
-
 input,select{
   width:100%;
-  padding:12px;
-  border-radius:6px;
-  border:1px solid #ccc;
+  padding:13px;
+  border-radius:10px;
+  border:1px solid #d0d7e2;
   font-size:15px;
+}
+input:focus,select:focus{
+  outline:none;
+  border-color:#1976d2;
 }
 
 .valid{border-color:#2e7d32}
 .invalid{border-color:#c62828}
-
-.status{
-  font-size:13px;
-  margin-top:4px;
-}
+.status{font-size:13px;margin-top:4px}
 .ok{color:#2e7d32}
 .err{color:#c62828}
 
+/* ===== PAYMENT BREAKUP ===== */
 .breakup{
-  background:#e3f2fd;
-  padding:15px;
-  border-left:5px solid #0d47a1;
-  margin-top:15px;
+  background:#eef5ff;
+  padding:18px;
+  border-left:6px solid #1976d2;
+  border-radius:10px;
+  font-size:15px;
 }
 
+/* ===== BUTTON ===== */
 button{
   width:100%;
-  padding:15px;
-  margin-top:20px;
+  padding:16px;
+  margin-top:22px;
   border:none;
-  border-radius:8px;
+  border-radius:12px;
   background:#1976d2;
   color:#fff;
   font-size:18px;
@@ -78,15 +96,21 @@ button{
 }
 button:hover{background:#0d47a1}
 
+/* ===== FOOTER ===== */
 footer{
   text-align:center;
   font-size:12px;
   color:#444;
-  padding:25px;
+  padding:30px 15px;
   background:#f1f5ff;
 }
-footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
+footer a{
+  color:#0d47a1;
+  text-decoration:none;
+  margin:0 6px;
+}
 
+/* ===== MODAL ===== */
 .modal{
   position:fixed;
   inset:0;
@@ -94,13 +118,51 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
   display:none;
   align-items:center;
   justify-content:center;
+  z-index:9999;
 }
 .modal-box{
   background:#fff;
   width:90%;
   max-width:420px;
-  padding:25px;
-  border-radius:16px;
+  padding:28px;
+  border-radius:20px;
+  text-align:center;
+  box-shadow:0 20px 40px rgba(0,0,0,.25);
+}
+.modal-box .tick{
+  width:48px;
+  height:48px;
+  margin:0 auto 10px;
+  border-radius:50%;
+  background:#e8f5e9;
+  color:#2e7d32;
+  line-height:48px;
+  font-size:24px;
+}
+.modal-box h3{margin:6px 0;color:#1b5e20}
+.modal-box .info{
+  text-align:left;
+  background:#f7f9fc;
+  border-radius:12px;
+  padding:14px;
+  margin:16px 0;
+  font-size:14px;
+}
+.modal-box .info div{
+  display:flex;
+  justify-content:space-between;
+  margin:6px 0;
+}
+.modal-box .amount{
+  font-size:26px;
+  font-weight:800;
+  color:#0d47a1;
+  margin-bottom:18px;
+}
+.modal-box .cancel{
+  background:#eee;
+  color:#333;
+  margin-top:12px;
 }
 </style>
 </head>
@@ -108,7 +170,7 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
 <body>
 
 <header>
-  <h1>🏠 EasyRent Pay</h1>
+  <div class="logo"><span>🏠</span>EasyRent Pay</div>
   <p>Secure Property Payments</p>
 </header>
 
@@ -177,96 +239,71 @@ Charges: ₹0.00<br>
 </div>
 
 <footer>
-<strong>Important Disclaimer</strong><br><br>
 EasyRent Pay is a payment facilitation platform only.<br>
-Payments processed via RBI-authorised partners.
-<br><br>
+Payments processed via RBI-authorised partners.<br><br>
 <a href="privacy.html">Privacy Policy</a> |
-<a href="terms.html">Terms & Conditions</a> |
-<a href="refund.html">Refund Policy</a>
+<a href="terms.html">Terms</a> |
+<a href="refund.html">Refund</a>
 </footer>
 
-<!-- CONFIRM -->
+<!-- CONFIRM MODAL -->
 <div class="modal" id="confirmModal">
   <div class="modal-box">
+    <div class="tick">✔</div>
     <h3>Confirm Payment</h3>
-    <p><b>Payer:</b> <span id="cPayer"></span></p>
-    <p><b>Mobile:</b> <span id="cMobile"></span></p>
-    <p><b>Beneficiary:</b> <span id="cBen"></span></p>
-    <p><b>Total:</b> ₹<span id="cTotal"></span></p>
+
+    <div class="info">
+      <div><span>Payer</span><b id="cPayer"></b></div>
+      <div><span>Mobile</span><b id="cMobile"></b></div>
+      <div><span>Beneficiary</span><b id="cBen"></b></div>
+    </div>
+
+    <div class="amount">₹ <span id="cTotal"></span></div>
+
     <button onclick="payNow()">Confirm & Pay</button>
-    <button style="background:#ccc;color:#000" onclick="closeConfirm()">Cancel</button>
+    <button class="cancel" onclick="closeConfirm()">Cancel</button>
   </div>
 </div>
 
 <script>
-const maskMobile = m => m[0]+"******"+m.slice(-3);
+const maskMobile=m=>m[0]+"******"+m.slice(-3);
+const isValidUpi=v=>v.includes("@")&&/^[a-zA-Z0-9._-]{2,50}@[a-zA-Z]{2,20}$/.test(v);
+const isValidAccount=v=>/^[0-9]{9,18}$/.test(v);
+const isValidIfsc=v=>/^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase());
 
-/* SIMPLE VALIDATION */
-function isValidUpi(v){
-  if(!v.includes("@")) return false;
-  const [u,h] = v.split("@");
-  return /^[a-zA-Z0-9._-]{2,50}$/.test(u) && /^[a-zA-Z]{2,20}$/.test(h);
+function toggleReceive(){
+  upiBox.style.display=receiveVia.value==="upi"?"block":"none";
+  bankBox.style.display=receiveVia.value==="bank"?"block":"none";
 }
-function isValidAccount(v){ return /^[0-9]{9,18}$/.test(v); }
-function isValidIfsc(v){ return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v); }
-
-/* LIVE CHECKS */
+function updateTotal(){
+  let a=Number(amount.value||0);
+  let f=method.value==="credit"?a*0.025:method.value==="debit"?20:0;
+  breakup.innerHTML=`Amount: ₹${a.toFixed(2)}<br>Charges: ₹${f.toFixed(2)}<br><strong>Total: ₹${(a+f).toFixed(2)}</strong>`;
+}
 function validateUpi(){
-  if(isValidUpi(upi.value)){
-    upi.className="valid"; upiStatus.innerHTML="✔ Looks valid"; upiStatus.className="status ok";
-  }else{
-    upi.className="invalid"; upiStatus.innerHTML="✖ Invalid UPI"; upiStatus.className="status err";
-  }
+  if(isValidUpi(upi.value)){upi.className="valid";upiStatus.innerHTML="✔ Looks valid";upiStatus.className="status ok";}
+  else{upi.className="invalid";upiStatus.innerHTML="✖ Invalid UPI";upiStatus.className="status err";}
 }
 function validateAccount(){
-  if(isValidAccount(account.value)){
-    account.className="valid"; accStatus.innerHTML="✔ Looks valid"; accStatus.className="status ok";
-  }else{
-    account.className="invalid"; accStatus.innerHTML="✖ Invalid account"; accStatus.className="status err";
-  }
+  if(isValidAccount(account.value)){account.className="valid";accStatus.innerHTML="✔ Looks valid";accStatus.className="status ok";}
+  else{account.className="invalid";accStatus.innerHTML="✖ Invalid account";accStatus.className="status err";}
 }
 function validateIfsc(){
-  if(isValidIfsc(ifsc.value.toUpperCase())){
-    ifsc.className="valid"; ifscStatus.innerHTML="✔ Looks valid"; ifscStatus.className="status ok";
-  }else{
-    ifsc.className="invalid"; ifscStatus.innerHTML="✖ Invalid IFSC"; ifscStatus.className="status err";
-  }
+  if(isValidIfsc(ifsc.value)){ifsc.className="valid";ifscStatus.innerHTML="✔ Looks valid";ifscStatus.className="status ok";}
+  else{ifsc.className="invalid";ifscStatus.innerHTML="✖ Invalid IFSC";ifscStatus.className="status err";}
 }
-
-/* TOGGLE */
-function toggleReceive(){
-  upiBox.style.display = receiveVia.value==="upi"?"block":"none";
-  bankBox.style.display = receiveVia.value==="bank"?"block":"none";
-}
-
-/* TOTAL */
-function updateTotal(){
-  let amt = Number(amount.value||0);
-  let fee = method.value==="credit"?amt*0.025:method.value==="debit"?20:0;
-  breakup.innerHTML = `
-    Amount: ₹${amt.toFixed(2)}<br>
-    Charges: ₹${fee.toFixed(2)}<br>
-    <strong>Total: ₹${(amt+fee).toFixed(2)}</strong>
-  `;
-}
-
-/* CONFIRM */
 function openConfirm(){
-  if(!payer.value||!mobile.value||!beneficiary.value||!amount.value){
-    alert("Fill all required fields"); return;
-  }
-  if(receiveVia.value==="upi" && !isValidUpi(upi.value)){ alert("Invalid UPI"); return; }
-  if(receiveVia.value==="bank" && (!isValidAccount(account.value)||!isValidIfsc(ifsc.value))){ alert("Invalid bank details"); return; }
-
+  if(!payer.value||!mobile.value||!beneficiary.value||!amount.value){alert("Fill all required fields");return;}
+  if(receiveVia.value==="upi"&&!isValidUpi(upi.value)){alert("Invalid UPI");return;}
+  if(receiveVia.value==="bank"&&(!isValidAccount(account.value)||!isValidIfsc(ifsc.value))){alert("Invalid bank details");return;}
+  let a=Number(amount.value);let f=method.value==="credit"?a*0.025:method.value==="debit"?20:0;
   cPayer.innerText=payer.value;
   cMobile.innerText=maskMobile(mobile.value);
   cBen.innerText=beneficiary.value;
-  cTotal.innerText=(Number(amount.value)+ (method.value==="credit"?amount.value*0.025:method.value==="debit"?20:0)).toFixed(2);
+  cTotal.innerText=(a+f).toFixed(2);
   confirmModal.style.display="flex";
 }
 function closeConfirm(){confirmModal.style.display="none";}
-
 function payNow(){
   closeConfirm();
   new Razorpay({
