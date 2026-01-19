@@ -2,84 +2,227 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>EasyRent Pay</title>
+  <title>EasyRent Pay – Smart Property Payment Platform</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+  <!-- Razorpay -->
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
   <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f2f6fc;
-      height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
+    body{margin:0;background:#f4f8ff;color:#222}
+
+    header{
+      background:#0d47a1;
+      color:#fff;
+      padding:22px;
+      text-align:center;
+    }
+    header h1{margin:0;font-size:26px}
+    header p{margin-top:6px;font-size:14px;opacity:.9}
+
+    .container{
+      max-width:900px;
+      margin:30px auto;
+      padding:0 15px;
     }
 
-    .card {
-      background: #fff;
-      width: 360px;
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      text-align: center;
+    .card{
+      background:#fff;
+      border-radius:10px;
+      padding:20px;
+      margin-bottom:25px;
+      box-shadow:0 4px 12px rgba(0,0,0,.08);
     }
 
-    h1 {
-      margin-bottom: 20px;
-      color: #0a3d91;
+    h2{
+      margin-top:0;
+      color:#0d47a1;
+      font-size:20px;
     }
 
-    input {
-      width: 100%;
-      padding: 14px;
-      font-size: 16px;
-      margin-bottom: 20px;
-      border-radius: 6px;
-      border: 1px solid #ccc;
+    label{
+      display:block;
+      margin:12px 0 6px;
+      font-weight:600;
+      font-size:14px;
     }
 
-    button {
-      width: 100%;
-      padding: 14px;
-      background: #1e73d8;
-      color: #fff;
-      font-size: 16px;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
+    input, select{
+      width:100%;
+      padding:12px;
+      border-radius:6px;
+      border:1px solid #ccc;
+      font-size:15px;
     }
 
-    button:hover {
-      background: #155ab3;
+    .info{
+      font-size:13px;
+      margin-top:8px;
+      color:#555;
+    }
+
+    .total{
+      background:#e3f2fd;
+      padding:15px;
+      border-left:5px solid #0d47a1;
+      font-size:18px;
+      font-weight:700;
+      margin-top:15px;
+    }
+
+    button{
+      width:100%;
+      padding:15px;
+      margin-top:20px;
+      border:none;
+      border-radius:8px;
+      background:#1976d2;
+      color:#fff;
+      font-size:18px;
+      font-weight:700;
+      cursor:pointer;
+    }
+    button:hover{background:#0d47a1}
+
+    footer{
+      text-align:center;
+      font-size:12px;
+      color:#444;
+      padding:25px 15px;
+      background:#f1f5ff;
     }
   </style>
 </head>
 
 <body>
 
+<header>
+  <h1>🏠 EasyRent Pay</h1>
+  <p>Secure Property Payments via UPI, Bank Transfer & Cards</p>
+</header>
+
+<div class="container">
+
+  <!-- PAYER DETAILS -->
   <div class="card">
-    <h1>🏠 EasyRent Pay</h1>
+    <h2>Payer Details</h2>
 
-    <input
-      type="number"
-      id="amount"
-      placeholder="Enter Rent Amount"
-    >
+    <label>Your Full Name</label>
+    <input type="text" id="payerName" placeholder="Your full name">
 
-    <button onclick="goNext()">Continue</button>
+    <label>Payment Amount (₹)</label>
+    <input type="number" id="amount" placeholder="Example: 30000" oninput="calculate()">
   </div>
 
-  <script>
-    function goNext() {
-      const amt = document.getElementById("amount").value;
-      if (!amt || amt <= 0) {
-        alert("Please enter valid amount");
-        return;
-      }
-      window.location.href = "details.html?amount=" + amt;
+  <!-- BENEFICIARY -->
+  <div class="card">
+    <h2>Beneficiary Details</h2>
+
+    <label>Beneficiary Name</label>
+    <input type="text" id="beneficiary" placeholder="Owner / Society / Beneficiary">
+
+    <label>UPI ID / Bank Details</label>
+    <input type="text" placeholder="abcd@bank or Account details">
+
+    <label>Purpose of Payment</label>
+    <select>
+      <option>Rent</option>
+      <option>Maintenance</option>
+      <option>Housing Charges</option>
+      <option>Other Property Charges</option>
+    </select>
+  </div>
+
+  <!-- PAYMENT MODE -->
+  <div class="card">
+    <h2>Select Payment Method</h2>
+
+    <select id="method" onchange="calculate()">
+      <option value="upi">UPI / Bank Transfer (No extra charges)</option>
+      <option value="debit">Debit Card (₹20 processing fee)</option>
+      <option value="credit">Credit Card (2.5% total charges)</option>
+    </select>
+
+    <div class="info" id="feeText"></div>
+
+    <div class="total" id="totalPayable">
+      Total Payable Amount: ₹0
+    </div>
+
+    <button onclick="payNow()">Proceed to Pay</button>
+  </div>
+
+</div>
+
+<footer>
+  <strong>Important Disclaimer</strong><br><br>
+  EasyRent Pay is a payment facilitation platform only.<br>
+  We do not provide credit, lending, or financial advisory services.<br>
+  All payments are processed via RBI-authorised payment partners.<br>
+  Settlement timelines depend on banks, card networks, and payment methods.
+</footer>
+  <!-- CONFIRMATION MODAL -->
+<div id="confirmModal" style="display:none; ...">
+   ...
+</div>
+</script>
+
+</body>
+</html>
+function calculate(){
+  let amount = Number(document.getElementById("amount").value || 0);
+  let method = document.getElementById("method").value;
+  let fee = 0;
+  let text = "";
+
+  if(method === "credit"){
+    fee = amount * 0.025;
+    text = "Includes bank + platform processing charges (2.5%)";
+  }
+  else if(method === "debit"){
+    fee = 20;
+    text = "Includes standard debit card processing fee";
+  }
+  else{
+    text = "No additional charges applied";
+  }
+
+  document.getElementById("feeText").innerText = text;
+  document.getElementById("totalPayable").innerText =
+    "Total Payable Amount: ₹" + (amount + fee).toFixed(2);
+}
+
+function payNow(){
+  let amount = Number(document.getElementById("amount").value);
+  let name = document.getElementById("payerName").value || "Customer";
+
+  if(!amount || amount < 1){
+    alert("Please enter a valid amount");
+    return;
+  }
+
+  let options = {
+    key: "rzp_live_S5dHw17cdqIxuk", // 🔴 REPLACE WITH LIVE KEY
+    amount: amount * 100,
+    currency: "INR",
+    name: "EasyRent Pay",
+    description: "Property Payment",
+    prefill: {
+      name: name
+    },
+    handler: function (response){
+      alert("Payment Successful!\nPayment ID: " + response.razorpay_payment_id);
+    },
+    theme: {
+      color: "#0d47a1"
     }
-  </script>
+  };
+
+  let rzp = new Razorpay(options);
+  rzp.open();
+}
+</script>
 
 </body>
 </html>
