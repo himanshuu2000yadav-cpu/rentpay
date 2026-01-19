@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
 <title>EasyRent Pay</title>
@@ -7,244 +7,77 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
-*{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
-body{margin:0;background:#f4f8ff;color:#222}
-header{background:#0d47a1;color:#fff;padding:22px;text-align:center}
-.container{max-width:900px;margin:30px auto;padding:0 15px}
-.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:25px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-h2{color:#0d47a1}
-label{display:block;margin:12px 0 6px;font-weight:600}
-input,select{width:100%;padding:12px;border-radius:6px;border:1px solid #ccc}
-.msg{font-size:13px;margin-top:4px}
-.valid{color:green}
-.invalid{color:red}
-.total{background:#e3f2fd;padding:15px;border-left:5px solid #0d47a1;font-size:18px;font-weight:700;margin-top:15px}
-button{width:100%;padding:14px;margin-top:18px;border:none;border-radius:10px;background:#1976d2;color:#fff;font-size:17px;font-weight:700;cursor:pointer}
-button:hover{background:#0d47a1}
-footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5ff}
-
-/* MODAL */
-.modal-overlay{
-  position:fixed;inset:0;
-  background:rgba(0,0,0,0.6);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-.modal-box{
-  background:#fff;
-  width:90%;
-  max-width:420px;
-  padding:30px;
-  border-radius:16px;
-  box-shadow:0 15px 40px rgba(0,0,0,.25);
-}
-.modal-title{text-align:center;color:#1b5e20;margin-bottom:18px}
-.modal-details{line-height:1.8;margin-bottom:20px}
-.modal-details div{display:flex;justify-content:space-between}
-.total-line{margin-top:10px;padding-top:10px;border-top:1px dashed #ccc;font-size:18px}
-.btn-secondary{background:#e3f2fd;color:#000}
-.success-box{text-align:center}
-.success-box h2{color:green}
+body{font-family:Arial;background:#f4f8ff;margin:0}
+.box{max-width:400px;margin:40px auto;background:#fff;padding:25px;border-radius:12px}
+label{display:block;margin-top:12px;font-weight:600}
+input{width:100%;padding:10px;margin-top:5px}
+button{width:100%;margin-top:20px;padding:12px;background:#1976d2;color:#fff;border:none;border-radius:8px;font-size:16px}
 </style>
 </head>
 
 <body>
 
-<header>
-<h1>🏠 EasyRent Pay</h1>
-<p>Secure Property Payments</p>
-</header>
+<div class="box">
+<h2>EasyRent Pay</h2>
 
-<div class="container" id="mainForm">
+<label>Payer Name</label>
+<input id="payer">
 
-<div class="card">
-<h2>Payer Details</h2>
-<label>Full Name *</label>
-<input id="payerName">
-<label>Mobile *</label>
+<label>Mobile</label>
 <input id="mobile">
-<label>Amount (₹) *</label>
-<input id="amount" type="number" oninput="calculate()">
-</div>
 
-<div class="card">
-<h2>Beneficiary Details</h2>
-<label>Beneficiary Name *</label>
+<label>Beneficiary</label>
 <input id="beneficiary">
 
-<label>Receive Payment Via *</label>
-<select id="receiveMethod" onchange="toggleFields()">
-<option value="">Select</option>
-<option value="upi">UPI ID</option>
-<option value="bank">Bank Account</option>
-</select>
+<label>Amount (₹)</label>
+<input id="amount">
 
-<div id="upiBox" style="display:none">
-<label>UPI ID *</label>
-<input id="upi" oninput="validateUPI()">
-<div id="upiMsg" class="msg"></div>
-</div>
-
-<div id="bankBox" style="display:none">
-<label>Account Number *</label>
-<input id="account" oninput="validateAccount()">
-<div id="accMsg" class="msg"></div>
-<label>IFSC *</label>
-<input id="ifsc" oninput="validateIFSC()">
-<div id="ifscMsg" class="msg"></div>
-<div id="bankName" class="msg"></div>
-</div>
-
-<label>Purpose *</label>
-<select id="purpose">
-<option value="">Select</option>
-<option>Rent</option>
-<option>Maintenance</option>
-</select>
-</div>
-
-<div class="card">
-<h2>Payment Method *</h2>
-<select id="method" onchange="calculate()">
-<option value="">Select</option>
-<option value="upi">UPI</option>
-<option value="debit">Debit (+₹20)</option>
-<option value="credit">Credit (+2.5%)</option>
-</select>
-
-<div class="total" id="totalPayable">Total Payable: ₹0</div>
-<button onclick="openConfirm()">Proceed to Pay</button>
-</div>
-
-</div>
-
-<footer>
-<strong>Important Disclaimer</strong><br><br>
-EasyRent Pay is a payment facilitation platform only.<br>
-All payments are processed via RBI-authorised partners.
-</footer>
-
-<!-- CONFIRM MODAL -->
-<div id="confirmModal" class="modal-overlay">
-  <div class="modal-box">
-    <h2 class="modal-title">Confirm Payment</h2>
-    <div class="modal-details">
-      <div><b>Payer</b><span id="cPayer"></span></div>
-      <div><b>Mobile</b><span id="cMobile"></span></div>
-      <div><b>Beneficiary</b><span id="cBeneficiary"></span></div>
-      <div><b>Receive Via</b><span id="cReceive"></span></div>
-      <div class="total-line"><b>Total</b><span>₹ <span id="cAmount"></span></span></div>
-    </div>
-    <button onclick="confirmPay()">Confirm & Pay</button>
-    <button class="btn-secondary" onclick="closeConfirm()">Cancel</button>
-  </div>
-</div>
-
-<!-- SUCCESS MODAL -->
-<div id="successModal" class="modal-overlay">
-  <div class="modal-box success-box">
-    <h2>✅ Payment Successful</h2>
-    <p id="successText"></p>
-    <button onclick="downloadReceipt()">Download Receipt</button>
-    <button class="btn-secondary" onclick="location.reload()">Done</button>
-  </div>
+<button onclick="pay()">Pay Now</button>
 </div>
 
 <script>
-let finalAmount=0;
+function pay(){
+  const amount = Number(amount.value);
+  fetch("http://localhost:5000/create-order", {
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body:JSON.stringify({ amount })
+  })
+  .then(res=>res.json())
+  .then(order=>{
+    const options = {
+      key: "rzp_live_S5dHw17cdqIxuk
+",
+      amount: order.amount,
+      currency: "INR",
+      order_id: order.id,
+      handler: function (response) {
 
-/* MASKING */
-const maskMobile=m=>m[0]+"******"+m.slice(-3);
-const maskAcc=a=>"********"+a.slice(-4);
-const maskUPI=u=>u.slice(0,2)+"***"+u.slice(u.indexOf("@"));
-
-function calculate(){
-let amt=+amount.value||0,fee=0;
-if(method.value==="credit") fee=amt*0.025;
-if(method.value==="debit") fee=20;
-finalAmount=amt+fee;
-totalPayable.innerText="Total Payable: ₹"+finalAmount.toFixed(2);
-}
-
-function toggleFields(){
-upiBox.style.display=receiveMethod.value==="upi"?"block":"none";
-bankBox.style.display=receiveMethod.value==="bank"?"block":"none";
-}
-
-function validateUPI(){
-upiMsg.innerHTML=/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi.value)
-?"<span class='valid'>✔ Looks valid</span>"
-:"<span class='invalid'>✖ Invalid UPI</span>";
-}
-
-function validateAccount(){
-accMsg.innerHTML=/^[0-9]{9,18}$/.test(account.value)
-?"<span class='valid'>✔ Looks valid</span>"
-:"<span class='invalid'>✖ Invalid</span>";
-}
-
-function validateIFSC(){
-if(/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc.value)){
-ifscMsg.innerHTML="<span class='valid'>✔ IFSC valid</span>";
-bankName.innerText="Recognised Bank";
-}else{
-ifscMsg.innerHTML="<span class='invalid'>✖ Invalid IFSC</span>";
-bankName.innerText="";
-}
-}
-
-function openConfirm(){
-if(!payerName.value||!mobile.value||!amount.value||!beneficiary.value||!purpose.value||!method.value){
-alert("Fill all required fields");return;}
-let receive="";
-if(receiveMethod.value==="upi"){
-if(!/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi.value)){alert("Invalid UPI");return;}
-receive="UPI "+maskUPI(upi.value);
-}else{
-if(!/^[0-9]{9,18}$/.test(account.value)){alert("Invalid account");return;}
-receive="A/c "+maskAcc(account.value);
-}
-cPayer.innerText=payerName.value;
-cMobile.innerText=maskMobile(mobile.value);
-cBeneficiary.innerText=beneficiary.value;
-cReceive.innerText=receive;
-cAmount.innerText=finalAmount.toFixed(2);
-confirmModal.style.display="flex";
-}
-
-function closeConfirm(){confirmModal.style.display="none";}
-
-function confirmPay(){
-closeConfirm();
-new Razorpay({
-key:"rzp_live_S5dHw17cdqIxuk",
-amount:Math.round(finalAmount*100),
-currency:"INR",
-handler:r=>{
-successText.innerText=
-"Payer: "+payerName.value+
-"\nMobile: "+maskMobile(mobile.value)+
-"\nBeneficiary: "+beneficiary.value+
-"\nAmount: ₹"+finalAmount.toFixed(2)+
-"\nPayment ID: "+r.razorpay_payment_id;
-successModal.style.display="flex";
-}
-}).open();
-}
-
-function downloadReceipt(){
-const html=`
-<h2>EasyRent Pay – Receipt</h2>
-<p>Payer: ${payerName.value}</p>
-<p>Mobile: ${maskMobile(mobile.value)}</p>
-<p>Beneficiary: ${beneficiary.value}</p>
-<p>Total Paid: ₹${finalAmount.toFixed(2)}</p>
-<p>Payments processed via RBI-authorised partners</p>`;
-const w=window.open("");
-w.document.write(html);
-w.document.close();
+        fetch("http://localhost:5000/verify-payment", {
+          method:"POST",
+          headers:{ "Content-Type":"application/json" },
+          body: JSON.stringify({
+            razorpay_order_id: response.razorpay_order_id,
+            razorpay_payment_id: response.razorpay_payment_id,
+            razorpay_signature: response.razorpay_signature,
+            payer: payer.value,
+            mobile: mobile.value,
+            beneficiary: beneficiary.value,
+            amount: amount.value
+          })
+        })
+        .then(r=>r.json())
+        .then(data=>{
+          if(data.status==="success"){
+            window.open("http://localhost:5000"+data.receiptUrl,"_blank");
+          }else{
+            alert("Verification failed");
+          }
+        });
+      }
+    };
+    new Razorpay(options).open();
+  });
 }
 </script>
 
