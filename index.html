@@ -4,37 +4,29 @@
 <meta charset="UTF-8">
 <title>EasyRent Pay</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Razorpay -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
+<!-- jsPDF -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
 <style>
-*{box-sizing:border-box;font-family:Inter,Arial,Helvetica,sans-serif}
+*{box-sizing:border-box;font-family:Inter,Arial,sans-serif}
 body{margin:0;background:#f4f8ff;color:#222}
 
-/* ===== HEADER ===== */
+/* HEADER */
 header{
   background:linear-gradient(135deg,#0d47a1,#1976d2);
   color:#fff;
-  padding:28px 15px;
+  padding:26px 15px;
   text-align:center;
 }
-header .logo{
-  font-size:28px;
-  font-weight:800;
-  letter-spacing:.5px;
-}
-header .logo span{font-size:30px;margin-right:6px}
-header p{
-  margin:6px 0 0;
-  font-size:14px;
-  opacity:.9;
-}
+header h1{margin:0;font-size:28px}
+header p{margin:6px 0 0;font-size:14px;opacity:.9}
 
-/* ===== LAYOUT ===== */
-.container{
-  max-width:900px;
-  margin:30px auto;
-  padding:0 15px;
-}
+/* LAYOUT */
+.container{max-width:900px;margin:30px auto;padding:0 15px}
 .card{
   background:#fff;
   border-radius:16px;
@@ -42,18 +34,10 @@ header p{
   margin-bottom:25px;
   box-shadow:0 10px 25px rgba(0,0,0,.08);
 }
-h2{
-  color:#0d47a1;
-  margin-top:0;
-  font-size:20px;
-}
+h2{margin-top:0;color:#0d47a1}
 
-/* ===== FORM ===== */
-label{
-  display:block;
-  margin:14px 0 6px;
-  font-weight:600;
-}
+/* FORM */
+label{display:block;margin:14px 0 6px;font-weight:600}
 input,select{
   width:100%;
   padding:13px;
@@ -61,10 +45,7 @@ input,select{
   border:1px solid #d0d7e2;
   font-size:15px;
 }
-input:focus,select:focus{
-  outline:none;
-  border-color:#1976d2;
-}
+input:focus,select:focus{outline:none;border-color:#1976d2}
 
 .valid{border-color:#2e7d32}
 .invalid{border-color:#c62828}
@@ -72,7 +53,7 @@ input:focus,select:focus{
 .ok{color:#2e7d32}
 .err{color:#c62828}
 
-/* ===== PAYMENT BREAKUP ===== */
+/* PAYMENT BREAKUP */
 .breakup{
   background:#eef5ff;
   padding:18px;
@@ -81,7 +62,7 @@ input:focus,select:focus{
   font-size:15px;
 }
 
-/* ===== BUTTON ===== */
+/* BUTTON */
 button{
   width:100%;
   padding:16px;
@@ -95,8 +76,9 @@ button{
   cursor:pointer;
 }
 button:hover{background:#0d47a1}
+button.cancel{background:#eee;color:#333}
 
-/* ===== FOOTER ===== */
+/* FOOTER */
 footer{
   text-align:center;
   font-size:12px;
@@ -104,16 +86,11 @@ footer{
   padding:30px 15px;
   background:#f1f5ff;
 }
-footer a{
-  color:#0d47a1;
-  text-decoration:none;
-  margin:0 6px;
-}
+footer a{color:#0d47a1;text-decoration:none;margin:0 6px}
 
-/* ===== MODAL ===== */
+/* MODALS */
 .modal{
-  position:fixed;
-  inset:0;
+  position:fixed;inset:0;
   background:rgba(0,0,0,.6);
   display:none;
   align-items:center;
@@ -122,16 +99,13 @@ footer a{
 }
 .modal-box{
   background:#fff;
-  width:90%;
-  max-width:420px;
+  width:90%;max-width:420px;
   padding:28px;
   border-radius:20px;
   text-align:center;
-  box-shadow:0 20px 40px rgba(0,0,0,.25);
 }
-.modal-box .tick{
-  width:48px;
-  height:48px;
+.tick{
+  width:48px;height:48px;
   margin:0 auto 10px;
   border-radius:50%;
   background:#e8f5e9;
@@ -139,8 +113,7 @@ footer a{
   line-height:48px;
   font-size:24px;
 }
-.modal-box h3{margin:6px 0;color:#1b5e20}
-.modal-box .info{
+.info{
   text-align:left;
   background:#f7f9fc;
   border-radius:12px;
@@ -148,21 +121,12 @@ footer a{
   margin:16px 0;
   font-size:14px;
 }
-.modal-box .info div{
-  display:flex;
-  justify-content:space-between;
-  margin:6px 0;
-}
-.modal-box .amount{
+.info div{display:flex;justify-content:space-between;margin:6px 0}
+.amount{
   font-size:26px;
   font-weight:800;
   color:#0d47a1;
   margin-bottom:18px;
-}
-.modal-box .cancel{
-  background:#eee;
-  color:#333;
-  margin-top:12px;
 }
 </style>
 </head>
@@ -170,7 +134,7 @@ footer a{
 <body>
 
 <header>
-  <div class="logo"><span>🏠</span>EasyRent Pay</div>
+  <h1>🏠 EasyRent Pay</h1>
   <p>Secure Property Payments</p>
 </header>
 
@@ -241,7 +205,7 @@ Charges: ₹0.00<br>
 <footer>
 EasyRent Pay is a payment facilitation platform only.<br>
 Payments processed via RBI-authorised partners.<br><br>
-<a href="privacy.html">Privacy Policy</a> |
+<a href="privacy.html">Privacy</a> |
 <a href="terms.html">Terms</a> |
 <a href="refund.html">Refund</a>
 </footer>
@@ -251,26 +215,43 @@ Payments processed via RBI-authorised partners.<br><br>
   <div class="modal-box">
     <div class="tick">✔</div>
     <h3>Confirm Payment</h3>
-
     <div class="info">
       <div><span>Payer</span><b id="cPayer"></b></div>
       <div><span>Mobile</span><b id="cMobile"></b></div>
       <div><span>Beneficiary</span><b id="cBen"></b></div>
     </div>
-
     <div class="amount">₹ <span id="cTotal"></span></div>
-
     <button onclick="payNow()">Confirm & Pay</button>
     <button class="cancel" onclick="closeConfirm()">Cancel</button>
   </div>
 </div>
 
+<!-- SUCCESS MODAL -->
+<div class="modal" id="successModal">
+  <div class="modal-box">
+    <div class="tick">✔</div>
+    <h3>Payment Successful</h3>
+    <div class="info">
+      <div><span>Transaction ID</span><b id="sTxn"></b></div>
+      <div><span>Payer</span><b id="sPayer"></b></div>
+      <div><span>Beneficiary</span><b id="sBen"></b></div>
+      <div><span>Amount</span><b>₹ <span id="sAmount"></span></b></div>
+      <div><span>Date</span><b id="sDate"></b></div>
+    </div>
+    <button onclick="downloadReceipt()">Download Receipt (PDF)</button>
+    <button class="cancel" onclick="closeSuccess()">Close</button>
+  </div>
+</div>
+
 <script>
+/* UTIL */
 const maskMobile=m=>m[0]+"******"+m.slice(-3);
 const isValidUpi=v=>v.includes("@")&&/^[a-zA-Z0-9._-]{2,50}@[a-zA-Z]{2,20}$/.test(v);
 const isValidAccount=v=>/^[0-9]{9,18}$/.test(v);
 const isValidIfsc=v=>/^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase());
+let lastTxnId="";
 
+/* UI */
 function toggleReceive(){
   upiBox.style.display=receiveVia.value==="upi"?"block":"none";
   bankBox.style.display=receiveVia.value==="bank"?"block":"none";
@@ -292,6 +273,8 @@ function validateIfsc(){
   if(isValidIfsc(ifsc.value)){ifsc.className="valid";ifscStatus.innerHTML="✔ Looks valid";ifscStatus.className="status ok";}
   else{ifsc.className="invalid";ifscStatus.innerHTML="✖ Invalid IFSC";ifscStatus.className="status err";}
 }
+
+/* FLOW */
 function openConfirm(){
   if(!payer.value||!mobile.value||!beneficiary.value||!amount.value){alert("Fill all required fields");return;}
   if(receiveVia.value==="upi"&&!isValidUpi(upi.value)){alert("Invalid UPI");return;}
@@ -304,14 +287,41 @@ function openConfirm(){
   confirmModal.style.display="flex";
 }
 function closeConfirm(){confirmModal.style.display="none";}
+
 function payNow(){
   closeConfirm();
   new Razorpay({
     key:"rzp_live_S5dHw17cdqIxuk",
     amount:Number(cTotal.innerText)*100,
     currency:"INR",
-    handler:()=>alert("Payment Successful")
+    handler:function(res){
+      lastTxnId=res.razorpay_payment_id;
+      sTxn.innerText=lastTxnId;
+      sPayer.innerText=payer.value;
+      sBen.innerText=beneficiary.value;
+      sAmount.innerText=cTotal.innerText;
+      sDate.innerText=new Date().toLocaleString();
+      successModal.style.display="flex";
+    }
   }).open();
+}
+function closeSuccess(){successModal.style.display="none";}
+
+/* PDF */
+function downloadReceipt(){
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  doc.setFontSize(18);
+  doc.text("EasyRent Pay - Payment Receipt",20,20);
+  doc.setFontSize(12);
+  doc.text("Transaction ID: "+lastTxnId,20,40);
+  doc.text("Payer: "+payer.value,20,50);
+  doc.text("Mobile: "+mobile.value,20,60);
+  doc.text("Beneficiary: "+beneficiary.value,20,70);
+  doc.text("Amount: ₹"+cTotal.innerText,20,80);
+  doc.text("Date: "+new Date().toLocaleString(),20,90);
+  doc.text("Payments processed via RBI-authorised partners.",20,110);
+  doc.save("EasyRentPay_Receipt.pdf");
 }
 </script>
 
