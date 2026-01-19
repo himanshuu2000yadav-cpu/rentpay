@@ -1,57 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<title>EasyRent Pay – Details</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<style>
-body{margin:0;font-family:Arial;background:#f4f8ff}
-.card{max-width:600px;margin:40px auto;background:#fff;padding:25px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
-h2{color:#0d47a1}
-input,select,button{width:100%;padding:12px;margin-top:10px}
-button{background:#1976d2;color:#fff;border:none;font-size:18px;font-weight:700;border-radius:6px}
-</style>
-</head>
-
-<body>
-
-<div class="card">
-<h2>Payment Details</h2>
-
-<input type="text" id="payer" placeholder="Your Name">
-<input type="text" id="owner" placeholder="Landlord Name">
-<input type="text" id="upi" placeholder="Landlord UPI / Bank Details">
-
-<select id="method">
-<option>Credit Card</option>
-<option>Debit Card</option>
-<option>UPI</option>
-</select>
-
-<button onclick="pay()">Pay ₹<span id="amt"></span></button>
-</div>
+<button onclick="goPay()">Pay Now</button>
 
 <script>
-const params = new URLSearchParams(window.location.search);
-const amount = params.get("amount");
-document.getElementById("amt").innerText = amount;
+function goPay(){
+  let amount = new URLSearchParams(window.location.search).get("amount");
 
-function pay(){
-  var options = {
-    "key": "rzp_live_S5dHw17cdqIxuk",
-    "amount": amount*100,
-    "currency": "INR",
-    "name": "EasyRent Pay",
-    "description": "Rent / Property Payment",
-    "handler": function (response){
-        alert("Payment Successful");
-    }
-  };
-  var rzp = new Razorpay(options);
-  rzp.open();
+  if(!amount){
+    alert("Invalid amount");
+    return;
+  }
+
+  // Razorpay payment link (fixed)
+  let link = "https://rzp.io/i/RENTPAY";
+
+  alert("You will be redirected to secure payment page");
+
+  window.open(link, "_blank");
 }
 </script>
-
-</body>
-</html>
