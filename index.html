@@ -1,38 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>EasyRent Pay – Enter Amount</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body{margin:0;font-family:Arial;background:#f4f8ff}
-.box{max-width:420px;margin:100px auto;background:#fff;padding:30px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.1)}
-h1{text-align:center;color:#0d47a1}
-input,button{width:100%;padding:14px;font-size:16px;margin-top:15px}
-button{background:#1976d2;color:#fff;border:none;border-radius:6px;font-weight:700;cursor:pointer}
-button:hover{background:#0d47a1}
-</style>
+  <meta charset="UTF-8">
+  <title>EasyRent Pay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #f2f6fc;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: #fff;
+      width: 360px;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      color: #0a3d91;
+    }
+
+    input {
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background: #1e73d8;
+      color: #fff;
+      font-size: 16px;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #155ab3;
+    }
+  </style>
 </head>
+
 <body>
 
-<div class="box">
-<h1>🏠 EasyRent Pay</h1>
+  <div class="card">
+    <h1>🏠 EasyRent Pay</h1>
 
-<input type="number" id="amount" placeholder="Enter Amount (₹)" />
+    <input
+      type="number"
+      id="amount"
+      placeholder="Enter Rent Amount"
+    >
 
-<button onclick="goNext()">Continue</button>
-</div>
+    <button onclick="goNext()">Continue</button>
+  </div>
 
-<script>
-function goNext(){
-  let amt = document.getElementById("amount").value;
-  if(!amt || amt<=0){
-    alert("Please enter a valid amount");
-    return;
-  }
-  window.location.href = "details.html?amount="+amt;
-}
-</script>
+  <script>
+    function goNext() {
+      const amt = document.getElementById("amount").value;
+      if (!amt || amt <= 0) {
+        alert("Please enter valid amount");
+        return;
+      }
+      window.location.href = "details.html?amount=" + amt;
+    }
+  </script>
 
 </body>
 </html>
