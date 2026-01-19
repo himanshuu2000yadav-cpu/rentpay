@@ -39,16 +39,14 @@ footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5
   padding:30px;
   border-radius:16px;
   box-shadow:0 15px 40px rgba(0,0,0,.25);
-  animation:pop .25s ease;
 }
-@keyframes pop{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
 .modal-title{text-align:center;color:#1b5e20;margin-bottom:18px}
 .modal-details{line-height:1.8;margin-bottom:20px}
 .modal-details div{display:flex;justify-content:space-between}
 .total-line{margin-top:10px;padding-top:10px;border-top:1px dashed #ccc;font-size:18px}
 .btn-secondary{background:#e3f2fd;color:#000}
-.success{background:#fff;padding:30px;border-radius:16px;text-align:center}
-.success h2{color:green}
+.success-box{text-align:center}
+.success-box h2{color:green}
 </style>
 </head>
 
@@ -144,19 +142,20 @@ All payments are processed via RBI-authorised partners.
   </div>
 </div>
 
-<!-- SUCCESS -->
+<!-- SUCCESS MODAL -->
 <div id="successModal" class="modal-overlay">
-  <div class="success">
+  <div class="modal-box success-box">
     <h2>✅ Payment Successful</h2>
     <p id="successText"></p>
-    <button onclick="location.reload()">Done</button>
+    <button onclick="downloadReceipt()">Download Receipt</button>
+    <button class="btn-secondary" onclick="location.reload()">Done</button>
   </div>
 </div>
 
 <script>
-let finalAmount=0,maskedInfo="";
+let finalAmount=0;
 
-/* MASK HELPERS */
+/* MASKING */
 const maskMobile=m=>m[0]+"******"+m.slice(-3);
 const maskAcc=a=>"********"+a.slice(-4);
 const maskUPI=u=>u.slice(0,2)+"***"+u.slice(u.indexOf("@"));
@@ -189,10 +188,10 @@ accMsg.innerHTML=/^[0-9]{9,18}$/.test(account.value)
 function validateIFSC(){
 if(/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc.value)){
 ifscMsg.innerHTML="<span class='valid'>✔ IFSC valid</span>";
-bankName.innerHTML="Recognised Bank";
+bankName.innerText="Recognised Bank";
 }else{
 ifscMsg.innerHTML="<span class='invalid'>✖ Invalid IFSC</span>";
-bankName.innerHTML="";
+bankName.innerText="";
 }
 }
 
@@ -212,15 +211,10 @@ cMobile.innerText=maskMobile(mobile.value);
 cBeneficiary.innerText=beneficiary.value;
 cReceive.innerText=receive;
 cAmount.innerText=finalAmount.toFixed(2);
-
 confirmModal.style.display="flex";
-document.body.style.overflow="hidden";
 }
 
-function closeConfirm(){
-confirmModal.style.display="none";
-document.body.style.overflow="auto";
-}
+function closeConfirm(){confirmModal.style.display="none";}
 
 function confirmPay(){
 closeConfirm();
@@ -238,6 +232,19 @@ successText.innerText=
 successModal.style.display="flex";
 }
 }).open();
+}
+
+function downloadReceipt(){
+const html=`
+<h2>EasyRent Pay – Receipt</h2>
+<p>Payer: ${payerName.value}</p>
+<p>Mobile: ${maskMobile(mobile.value)}</p>
+<p>Beneficiary: ${beneficiary.value}</p>
+<p>Total Paid: ₹${finalAmount.toFixed(2)}</p>
+<p>Payments processed via RBI-authorised partners</p>`;
+const w=window.open("");
+w.document.write(html);
+w.document.close();
 }
 </script>
 
