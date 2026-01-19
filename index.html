@@ -126,7 +126,7 @@
     <input type="text" placeholder="abcd@bank or Account details">
 
     <label>Purpose of Payment</label>
-    <select>
+    <select id="purpose">
       <option>Rent</option>
       <option>Maintenance</option>
       <option>Housing Charges</option>
@@ -150,7 +150,7 @@
       Total Payable Amount: ₹0
     </div>
 
-    <button onclick="payNow()">Proceed to Pay</button>
+    <button onclick="openConfirm()">Proceed to Pay</button>
   </div>
 
 </div>
@@ -162,14 +162,33 @@
   All payments are processed via RBI-authorised payment partners.<br>
   Settlement timelines depend on banks, card networks, and payment methods.
 </footer>
-  <!-- CONFIRMATION MODAL -->
-<div id="confirmModal" style="display:none; ...">
-   ...
-</div>
-</script>
 
-</body>
-</html>
+<!-- CONFIRMATION MODAL -->
+<div id="confirmModal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,.55); z-index:999; align-items:center; justify-content:center;">
+  <div style="background:#fff; width:90%; max-width:440px; border-radius:14px; padding:28px; box-shadow:0 15px 35px rgba(0,0,0,.25);">
+
+    <h2 style="margin:0 0 18px; color:#0d47a1; text-align:center;">
+      Confirm Payment
+    </h2>
+
+    <div style="font-size:15px; line-height:1.7;">
+      <div style="margin-bottom:10px;"><strong>Payer:</strong><br><span id="cPayer"></span></div>
+      <div style="margin-bottom:10px;"><strong>Beneficiary:</strong><br><span id="cBeneficiary"></span></div>
+      <div style="margin-bottom:14px;"><strong>Purpose:</strong><br><span id="cPurpose"></span></div>
+
+      <div style="margin-top:18px; padding:14px; background:#f1f6ff; border-radius:8px; text-align:center; font-size:20px; font-weight:700;">
+        ₹ <span id="cAmount"></span>
+      </div>
+    </div>
+
+    <button onclick="confirmPay()" style="background:#28a745;">Confirm & Pay</button>
+    <button onclick="closeConfirm()" style="background:#e0e0e0;color:#000;">Cancel</button>
+  </div>
+</div>
+
+<script>
+let finalAmount = 0;
+
 function calculate(){
   let amount = Number(document.getElementById("amount").value || 0);
   let method = document.getElementById("method").value;
@@ -179,48 +198,58 @@ function calculate(){
   if(method === "credit"){
     fee = amount * 0.025;
     text = "Includes bank + platform processing charges (2.5%)";
-  }
-  else if(method === "debit"){
+  } else if(method === "debit"){
     fee = 20;
     text = "Includes standard debit card processing fee";
-  }
-  else{
+  } else {
     text = "No additional charges applied";
   }
 
+  finalAmount = amount + fee;
   document.getElementById("feeText").innerText = text;
   document.getElementById("totalPayable").innerText =
-    "Total Payable Amount: ₹" + (amount + fee).toFixed(2);
+    "Total Payable Amount: ₹" + finalAmount.toFixed(2);
 }
 
-function payNow(){
+function openConfirm(){
   let amount = Number(document.getElementById("amount").value);
-  let name = document.getElementById("payerName").value || "Customer";
-
   if(!amount || amount < 1){
     alert("Please enter a valid amount");
     return;
   }
 
+  document.getElementById("cPayer").innerText =
+    document.getElementById("payerName").value || "Customer";
+  document.getElementById("cBeneficiary").innerText =
+    document.getElementById("beneficiary").value || "Beneficiary";
+  document.getElementById("cPurpose").innerText =
+    document.getElementById("purpose").value;
+  document.getElementById("cAmount").innerText =
+    finalAmount.toFixed(2);
+
+  document.getElementById("confirmModal").style.display = "flex";
+}
+
+function closeConfirm(){
+  document.getElementById("confirmModal").style.display = "none";
+}
+
+function confirmPay(){
+  closeConfirm();
+
   let options = {
-    key: "rzp_live_S5dHw17cdqIxuk", // 🔴 REPLACE WITH LIVE KEY
-    amount: amount * 100,
+    key: "rzp_live_S5dHw17cdqIxuk", // 🔴 replace with live key
+    amount: Math.round(finalAmount * 100),
     currency: "INR",
     name: "EasyRent Pay",
     description: "Property Payment",
-    prefill: {
-      name: name
-    },
     handler: function (response){
       alert("Payment Successful!\nPayment ID: " + response.razorpay_payment_id);
     },
-    theme: {
-      color: "#0d47a1"
-    }
+    theme: { color: "#0d47a1" }
   };
 
-  let rzp = new Razorpay(options);
-  rzp.open();
+  new Razorpay(options).open();
 }
 </script>
 
