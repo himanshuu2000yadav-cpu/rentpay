@@ -47,12 +47,21 @@ input,select{
   font-size:15px;
 }
 
+.valid{border-color:#2e7d32}
+.invalid{border-color:#c62828}
+
+.status{
+  font-size:13px;
+  margin-top:4px;
+}
+.ok{color:#2e7d32}
+.err{color:#c62828}
+
 .breakup{
   background:#e3f2fd;
   padding:15px;
   border-left:5px solid #0d47a1;
   margin-top:15px;
-  font-size:15px;
 }
 
 button{
@@ -85,7 +94,6 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
   display:none;
   align-items:center;
   justify-content:center;
-  z-index:9999;
 }
 .modal-box{
   background:#fff;
@@ -94,7 +102,6 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
   padding:25px;
   border-radius:16px;
 }
-.modal-box h3{text-align:center;color:#1b5e20;margin-top:0}
 </style>
 </head>
 
@@ -110,13 +117,10 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
 <!-- PAYER -->
 <div class="card">
 <h2>Payer Details</h2>
-
-<label>Payer Name *</label>
+<label>Name *</label>
 <input id="payer">
-
 <label>Mobile *</label>
 <input id="mobile" maxlength="10">
-
 <label>Amount (₹) *</label>
 <input id="amount" type="number" oninput="updateTotal()">
 </div>
@@ -137,14 +141,18 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
 
 <div id="upiBox" style="display:none">
   <label>UPI ID *</label>
-  <input id="upi" placeholder="example@bank">
+  <input id="upi" oninput="validateUpi()">
+  <div id="upiStatus" class="status"></div>
 </div>
 
 <div id="bankBox" style="display:none">
   <label>Account Number *</label>
-  <input id="account">
+  <input id="account" oninput="validateAccount()">
+  <div id="accStatus" class="status"></div>
+
   <label>IFSC *</label>
-  <input id="ifsc">
+  <input id="ifsc" oninput="validateIfsc()">
+  <div id="ifscStatus" class="status"></div>
 </div>
 
 <label>Payment Method *</label>
@@ -158,13 +166,11 @@ footer a{color:#0d47a1;text-decoration:none;margin:0 5px}
 <!-- PAYMENT -->
 <div class="card">
 <h2>Payment</h2>
-
 <div class="breakup" id="breakup">
-  Amount: ₹0.00<br>
-  Charges: ₹0.00<br>
-  <strong>Total: ₹0.00</strong>
+Amount: ₹0.00<br>
+Charges: ₹0.00<br>
+<strong>Total: ₹0.00</strong>
 </div>
-
 <button onclick="openConfirm()">Proceed to Pay</button>
 </div>
 
@@ -180,46 +186,64 @@ Payments processed via RBI-authorised partners.
 <a href="refund.html">Refund Policy</a>
 </footer>
 
-<!-- CONFIRM MODAL -->
+<!-- CONFIRM -->
 <div class="modal" id="confirmModal">
   <div class="modal-box">
     <h3>Confirm Payment</h3>
     <p><b>Payer:</b> <span id="cPayer"></span></p>
     <p><b>Mobile:</b> <span id="cMobile"></span></p>
     <p><b>Beneficiary:</b> <span id="cBen"></span></p>
-    <p><b>Amount:</b> ₹<span id="cBase"></span></p>
-    <p><b>Charges:</b> ₹<span id="cFee"></span></p>
     <p><b>Total:</b> ₹<span id="cTotal"></span></p>
-
     <button onclick="payNow()">Confirm & Pay</button>
     <button style="background:#ccc;color:#000" onclick="closeConfirm()">Cancel</button>
   </div>
 </div>
 
 <script>
-/* HELPERS */
 const maskMobile = m => m[0]+"******"+m.slice(-3);
-const upiRegex = /^[a-zA-Z0-9.\-_]{2,256}@[a-zA-Z]{2,64}$/;
-const ifscRegex = /^[A-Z]{4}0[A-Z0-9]{6}$/;
 
-/* SHOW / HIDE */
+/* SIMPLE VALIDATION */
+function isValidUpi(v){
+  if(!v.includes("@")) return false;
+  const [u,h] = v.split("@");
+  return /^[a-zA-Z0-9._-]{2,50}$/.test(u) && /^[a-zA-Z]{2,20}$/.test(h);
+}
+function isValidAccount(v){ return /^[0-9]{9,18}$/.test(v); }
+function isValidIfsc(v){ return /^[A-Z]{4}0[A-Z0-9]{6}$/.test(v); }
+
+/* LIVE CHECKS */
+function validateUpi(){
+  if(isValidUpi(upi.value)){
+    upi.className="valid"; upiStatus.innerHTML="✔ Looks valid"; upiStatus.className="status ok";
+  }else{
+    upi.className="invalid"; upiStatus.innerHTML="✖ Invalid UPI"; upiStatus.className="status err";
+  }
+}
+function validateAccount(){
+  if(isValidAccount(account.value)){
+    account.className="valid"; accStatus.innerHTML="✔ Looks valid"; accStatus.className="status ok";
+  }else{
+    account.className="invalid"; accStatus.innerHTML="✖ Invalid account"; accStatus.className="status err";
+  }
+}
+function validateIfsc(){
+  if(isValidIfsc(ifsc.value.toUpperCase())){
+    ifsc.className="valid"; ifscStatus.innerHTML="✔ Looks valid"; ifscStatus.className="status ok";
+  }else{
+    ifsc.className="invalid"; ifscStatus.innerHTML="✖ Invalid IFSC"; ifscStatus.className="status err";
+  }
+}
+
+/* TOGGLE */
 function toggleReceive(){
-  upiBox.style.display = receiveVia.value==="upi" ? "block" : "none";
-  bankBox.style.display = receiveVia.value==="bank" ? "block" : "none";
+  upiBox.style.display = receiveVia.value==="upi"?"block":"none";
+  bankBox.style.display = receiveVia.value==="bank"?"block":"none";
 }
 
-/* CHARGES */
-function calcCharges(amount){
-  if(method.value==="debit") return 20;
-  if(method.value==="credit") return amount * 0.025;
-  return 0;
-}
-
-/* LIVE TOTAL */
+/* TOTAL */
 function updateTotal(){
   let amt = Number(amount.value||0);
-  let fee = calcCharges(amt);
-
+  let fee = method.value==="credit"?amt*0.025:method.value==="debit"?20:0;
   breakup.innerHTML = `
     Amount: ₹${amt.toFixed(2)}<br>
     Charges: ₹${fee.toFixed(2)}<br>
@@ -227,49 +251,22 @@ function updateTotal(){
   `;
 }
 
-/* VALIDATION */
-function validate(){
-  if(!payer.value||!mobile.value||!beneficiary.value||!amount.value){
-    alert("Please fill all required fields"); return false;
-  }
-
-  if(receiveVia.value==="upi"){
-    if(!upiRegex.test(upi.value)){
-      alert("Invalid UPI ID"); return false;
-    }
-  }
-
-  if(receiveVia.value==="bank"){
-    if(account.value.length < 9){
-      alert("Invalid Account Number"); return false;
-    }
-    if(!ifscRegex.test(ifsc.value.toUpperCase())){
-      alert("Invalid IFSC Code"); return false;
-    }
-  }
-  return true;
-}
-
 /* CONFIRM */
 function openConfirm(){
-  if(!validate()) return;
+  if(!payer.value||!mobile.value||!beneficiary.value||!amount.value){
+    alert("Fill all required fields"); return;
+  }
+  if(receiveVia.value==="upi" && !isValidUpi(upi.value)){ alert("Invalid UPI"); return; }
+  if(receiveVia.value==="bank" && (!isValidAccount(account.value)||!isValidIfsc(ifsc.value))){ alert("Invalid bank details"); return; }
 
-  let amt = Number(amount.value);
-  let fee = calcCharges(amt);
-
-  cPayer.innerText = payer.value;
-  cMobile.innerText = maskMobile(mobile.value);
-  cBen.innerText = beneficiary.value;
-  cBase.innerText = amt.toFixed(2);
-  cFee.innerText = fee.toFixed(2);
-  cTotal.innerText = (amt+fee).toFixed(2);
-
+  cPayer.innerText=payer.value;
+  cMobile.innerText=maskMobile(mobile.value);
+  cBen.innerText=beneficiary.value;
+  cTotal.innerText=(Number(amount.value)+ (method.value==="credit"?amount.value*0.025:method.value==="debit"?20:0)).toFixed(2);
   confirmModal.style.display="flex";
 }
+function closeConfirm(){confirmModal.style.display="none";}
 
-function closeConfirm(){ confirmModal.style.display="none"; }
-
-/* PAY */
 function payNow(){
   closeConfirm();
   new Razorpay({
