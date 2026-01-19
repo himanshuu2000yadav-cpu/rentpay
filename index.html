@@ -10,11 +10,9 @@
 *{box-sizing:border-box;font-family:Arial,Helvetica,sans-serif}
 body{margin:0;background:#f4f8ff;color:#222}
 header{background:#0d47a1;color:#fff;padding:22px;text-align:center}
-header h1{margin:0;font-size:26px}
-header p{margin-top:6px;font-size:14px;opacity:.9}
 .container{max-width:900px;margin:30px auto;padding:0 15px}
 .card{background:#fff;border-radius:10px;padding:20px;margin-bottom:25px;box-shadow:0 4px 12px rgba(0,0,0,.08)}
-h2{margin-top:0;color:#0d47a1}
+h2{color:#0d47a1}
 label{display:block;margin:12px 0 6px;font-weight:600}
 input,select{width:100%;padding:12px;border-radius:6px;border:1px solid #ccc}
 .msg{font-size:13px;margin-top:4px}
@@ -22,8 +20,10 @@ input,select{width:100%;padding:12px;border-radius:6px;border:1px solid #ccc}
 .invalid{color:red}
 .total{background:#e3f2fd;padding:15px;border-left:5px solid #0d47a1;font-size:18px;font-weight:700;margin-top:15px}
 button{width:100%;padding:15px;margin-top:20px;border:none;border-radius:8px;background:#1976d2;color:#fff;font-size:18px;font-weight:700;cursor:pointer}
-button:hover{background:#0d47a1}
 footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5ff}
+.center{display:flex;align-items:center;justify-content:center;height:100vh}
+.success{background:#fff;padding:30px;border-radius:14px;text-align:center;box-shadow:0 10px 25px rgba(0,0,0,.15)}
+.success h2{color:green}
 </style>
 </head>
 
@@ -31,54 +31,45 @@ footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5
 
 <header>
 <h1>🏠 EasyRent Pay</h1>
-<p>Secure Property Payments via UPI, Cards & Bank Transfer</p>
+<p>Secure Property Payments</p>
 </header>
 
-<div class="container">
+<div class="container" id="mainForm">
 
-<!-- PAYER -->
 <div class="card">
 <h2>Payer Details</h2>
-
 <label>Full Name *</label>
 <input id="payerName">
-
-<label>Mobile Number *</label>
-<input id="mobile" placeholder="10-digit number">
-
+<label>Mobile *</label>
+<input id="mobile">
 <label>Amount (₹) *</label>
 <input id="amount" type="number" oninput="calculate()">
 </div>
 
-<!-- BENEFICIARY -->
 <div class="card">
 <h2>Beneficiary Details</h2>
-
 <label>Beneficiary Name *</label>
 <input id="beneficiary">
 
-<label>Receive Payment Via *</label>
+<label>Receive Via *</label>
 <select id="receiveMethod" onchange="toggleFields()">
 <option value="">Select</option>
 <option value="upi">UPI ID</option>
 <option value="bank">Bank Account</option>
 </select>
 
-<!-- UPI -->
 <div id="upiBox" style="display:none">
 <label>UPI ID *</label>
-<input id="upi" placeholder="example@bank" oninput="validateUPI()">
+<input id="upi" oninput="validateUPI()">
 <div id="upiMsg" class="msg"></div>
 </div>
 
-<!-- BANK -->
 <div id="bankBox" style="display:none">
 <label>Account Number *</label>
 <input id="account" oninput="validateAccount()">
 <div id="accMsg" class="msg"></div>
-
-<label>IFSC Code *</label>
-<input id="ifsc" placeholder="SBIN0001234" oninput="validateIFSC()">
+<label>IFSC *</label>
+<input id="ifsc" oninput="validateIFSC()">
 <div id="ifscMsg" class="msg"></div>
 <div id="bankName" class="msg"></div>
 </div>
@@ -88,63 +79,56 @@ footer{text-align:center;font-size:12px;color:#444;padding:25px;background:#f1f5
 <option value="">Select</option>
 <option>Rent</option>
 <option>Maintenance</option>
-<option>Housing Charges</option>
 </select>
 </div>
 
-<!-- PAYMENT -->
 <div class="card">
 <h2>Payment Method *</h2>
 <select id="method" onchange="calculate()">
 <option value="">Select</option>
-<option value="upi">UPI (No charges)</option>
-<option value="debit">Debit Card (+₹20)</option>
-<option value="credit">Credit Card (+2.5%)</option>
+<option value="upi">UPI</option>
+<option value="debit">Debit (+₹20)</option>
+<option value="credit">Credit (+2.5%)</option>
 </select>
 
 <div class="total" id="totalPayable">Total Payable: ₹0</div>
-<button onclick="openConfirm()">Proceed to Pay</button>
+<button onclick="openConfirm()">Proceed</button>
 </div>
 
+</div>
+
+<!-- CONFIRM -->
+<div id="confirmModal" class="center" style="display:none">
+<div class="success">
+<h2>Confirm Payment</h2>
+<p id="confirmText"></p>
+<button onclick="confirmPay()">Confirm & Pay</button>
+<button onclick="closeConfirm()">Cancel</button>
+</div>
+</div>
+
+<!-- SUCCESS -->
+<div id="successScreen" class="center" style="display:none">
+<div class="success">
+<h2>✅ Payment Successful</h2>
+<p id="successText"></p>
+<button onclick="location.reload()">Done</button>
+</div>
 </div>
 
 <footer>
-<strong>Important Disclaimer</strong><br><br>
-EasyRent Pay is a payment facilitation platform only.<br>
-We do not provide credit, lending, or financial advisory services.<br>
-All payments are processed via RBI-authorised payment partners.<br>
-Settlement timelines depend on banks, card networks, and payment methods.<br><br>
-<span style="font-weight:600">Payments processed via RBI-authorised partners</span>
+<strong>Important Disclaimer</strong><br>
+Payments processed via RBI-authorised partners
 </footer>
 
-<!-- CONFIRM MODAL -->
-<div id="confirmModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:999;align-items:center;justify-content:center">
-<div style="background:#fff;width:90%;max-width:440px;border-radius:14px;padding:28px">
-
-<h2 style="text-align:center;color:#0d47a1">Confirm Payment</h2>
-
-<div style="line-height:1.8">
-<div style="display:flex;justify-content:space-between"><b>Payer</b><span id="cPayer"></span></div>
-<div style="display:flex;justify-content:space-between"><b>Mobile</b><span id="cMobile"></span></div>
-<div style="display:flex;justify-content:space-between"><b>Beneficiary</b><span id="cBeneficiary"></span></div>
-<div style="display:flex;justify-content:space-between"><b>Receive Via</b><span id="cReceive"></span></div>
-<div style="display:flex;justify-content:space-between"><b>Payment Method</b><span id="cMethod"></span></div>
-<div style="display:flex;justify-content:space-between"><b>Purpose</b><span id="cPurpose"></span></div>
-
-<div style="margin-top:15px;padding:12px;background:#f1f6ff;display:flex;justify-content:space-between;font-size:18px;font-weight:700">
-<span>Total</span><span>₹ <span id="cAmount"></span></span>
-</div>
-</div>
-
-<button onclick="confirmPay()" style="background:#28a745">Confirm & Pay</button>
-<button onclick="closeConfirm()" style="background:#e0e0e0;color:#000">Cancel</button>
-</div>
-</div>
-
 <script>
-let finalAmount=0;
+let finalAmount=0,maskedInfo="";
 
-/* ---------- CALCULATION ---------- */
+/* helpers */
+const maskMobile=m=>m[0]+"******"+m.slice(-3);
+const maskAcc=a=>"********"+a.slice(-4);
+const maskUPI=u=>u.slice(0,2)+"***"+u.slice(u.indexOf("@"));
+
 function calculate(){
 let amt=+amount.value||0,fee=0;
 if(method.value==="credit") fee=amt*0.025;
@@ -153,83 +137,69 @@ finalAmount=amt+fee;
 totalPayable.innerText="Total Payable: ₹"+finalAmount.toFixed(2);
 }
 
-/* ---------- TOGGLE ---------- */
 function toggleFields(){
 upiBox.style.display=receiveMethod.value==="upi"?"block":"none";
 bankBox.style.display=receiveMethod.value==="bank"?"block":"none";
 }
 
-/* ---------- VALIDATION ---------- */
 function validateUPI(){
-if(!upi.value){upiMsg.innerHTML="";return;}
-if(/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi.value)){
-upiMsg.innerHTML="✔ UPI ID looks valid";upiMsg.className="msg valid";
-}else{
-upiMsg.innerHTML="✖ Invalid UPI ID";upiMsg.className="msg invalid";
-}
+upiMsg.innerHTML=/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi.value)
+?"<span class='valid'>✔ Looks valid</span>"
+:"<span class='invalid'>✖ Invalid UPI</span>";
 }
 
 function validateAccount(){
-if(!account.value){accMsg.innerHTML="";return;}
-if(/^[0-9]{9,18}$/.test(account.value)){
-accMsg.innerHTML="✔ Account number looks valid";accMsg.className="msg valid";
-}else{
-accMsg.innerHTML="✖ Invalid account number";accMsg.className="msg invalid";
-}
+accMsg.innerHTML=/^[0-9]{9,18}$/.test(account.value)
+?"<span class='valid'>✔ Looks valid</span>"
+:"<span class='invalid'>✖ Invalid</span>";
 }
 
 function validateIFSC(){
-const v=ifsc.value.toUpperCase();
-if(!v){ifscMsg.innerHTML="";bankName.innerHTML="";return;}
-if(/^[A-Z]{4}0[A-Z0-9]{6}$/.test(v)){
-ifscMsg.innerHTML="✔ IFSC looks valid";ifscMsg.className="msg valid";
-const map={SBIN:"State Bank of India",HDFC:"HDFC Bank",ICIC:"ICICI Bank",AXIS:"Axis Bank",PUNB:"Punjab National Bank",BARB:"Bank of Baroda"};
-bankName.innerHTML="Bank: "+(map[v.substr(0,4)]||"Recognised Bank");
+if(/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc.value)){
+ifscMsg.innerHTML="<span class='valid'>✔ IFSC valid</span>";
+bankName.innerHTML="Bank detected";
 }else{
-ifscMsg.innerHTML="✖ Invalid IFSC";ifscMsg.className="msg invalid";
+ifscMsg.innerHTML="<span class='invalid'>✖ Invalid IFSC</span>";
 bankName.innerHTML="";
 }
 }
 
-/* ---------- CONFIRM ---------- */
 function openConfirm(){
-if(!payerName.value||!mobile.value||!beneficiary.value||!purpose.value||!method.value||!amount.value){
-alert("Please fill all mandatory fields");return;}
-if(mobile.value.length!==10){alert("Invalid mobile number");return;}
-
+if(!payerName.value||!mobile.value||!amount.value||!beneficiary.value||!purpose.value||!method.value){
+alert("Fill all required fields");return;
+}
 let receive="";
 if(receiveMethod.value==="upi"){
-if(!/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi.value)){alert("Invalid UPI ID");return;}
-receive="UPI: "+upi.value;
-}else if(receiveMethod.value==="bank"){
-if(!/^[0-9]{9,18}$/.test(account.value)||!/^[A-Z]{4}0[A-Z0-9]{6}$/.test(ifsc.value)){
-alert("Invalid bank details");return;}
-receive="A/c: "+account.value+" | IFSC: "+ifsc.value;
-}else{alert("Select receive method");return;}
-
-cPayer.innerText=payerName.value;
-cMobile.innerText=mobile.value;
-cBeneficiary.innerText=beneficiary.value;
-cReceive.innerText=receive;
-cMethod.innerText=method.options[method.selectedIndex].text;
-cPurpose.innerText=purpose.value;
-cAmount.innerText=finalAmount.toFixed(2);
-
+if(!/^[\w.\-]{2,}@[a-zA-Z]{2,}$/.test(upi.value)){alert("Invalid UPI");return;}
+receive="UPI "+maskUPI(upi.value);
+}else{
+if(!/^[0-9]{9,18}$/.test(account.value)){alert("Invalid account");return;}
+receive="A/c "+maskAcc(account.value);
+}
+maskedInfo=`
+Payer: ${payerName.value}
+Mobile: ${maskMobile(mobile.value)}
+Beneficiary: ${beneficiary.value}
+Receive Via: ${receive}
+Total: ₹${finalAmount.toFixed(2)}
+`;
+confirmText.innerText=maskedInfo;
 confirmModal.style.display="flex";
 }
 
 function closeConfirm(){confirmModal.style.display="none";}
 
-/* ---------- PAYMENT ---------- */
 function confirmPay(){
 closeConfirm();
 new Razorpay({
 key:"rzp_live_S5dHw17cdqIxuk",
 amount:Math.round(finalAmount*100),
 currency:"INR",
-name:"EasyRent Pay",
-description:"Property Payment",
-handler:r=>alert("Payment Successful\nID: "+r.razorpay_payment_id)
+handler:r=>{
+mainForm.style.display="none";
+successText.innerText=maskedInfo+"\nPayment ID: "+r.razorpay_payment_id;
+successScreen.style.display="flex";
+}
 }).open();
 }
 </script>
