@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Confirm Payment</title>
+  <title>Confirm Rent Payment</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
@@ -18,32 +18,54 @@
 
     .card {
       background: #fff;
-      width: 360px;
+      width: 420px;
       padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-      text-align: center;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.12);
     }
 
     h2 {
+      text-align: center;
       color: #0a3d91;
-      margin-bottom: 10px;
+      margin-bottom: 20px;
+    }
+
+    .row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+      font-size: 15px;
+    }
+
+    .row span {
+      color: #555;
+    }
+
+    .row strong {
+      color: #000;
+    }
+
+    .divider {
+      height: 1px;
+      background: #ddd;
+      margin: 18px 0;
     }
 
     .amount {
-      font-size: 28px;
+      text-align: center;
+      font-size: 30px;
       font-weight: bold;
-      margin: 20px 0;
+      margin: 15px 0;
     }
 
     button {
       width: 100%;
-      padding: 14px;
+      padding: 15px;
       background: #28a745;
       color: #fff;
-      font-size: 16px;
+      font-size: 17px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
     }
 
@@ -57,7 +79,41 @@
 
   <div class="card">
     <h2>Confirm Rent Payment</h2>
+
+    <!-- Customer Details -->
+    <div class="row">
+      <span>Tenant Name</span>
+      <strong>Rohit Kumar</strong>
+    </div>
+
+    <div class="row">
+      <span>Mobile Number</span>
+      <strong>+91 9XXXXXXX21</strong>
+    </div>
+
+    <div class="row">
+      <span>Rent Month</span>
+      <strong>January 2026</strong>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Owner Details -->
+    <div class="row">
+      <span>Owner Name</span>
+      <strong>Himanshu Yadav</strong>
+    </div>
+
+    <div class="row">
+      <span>Payment Method</span>
+      <strong>UPI</strong>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Amount -->
     <div class="amount" id="showAmount">₹ 0</div>
+
     <button onclick="payNow()">Pay Now</button>
   </div>
 
@@ -69,7 +125,7 @@
       "₹ " + (amount || 0);
 
     function payNow() {
-      alert("Payment initiated for ₹ " + amount);
+      alert("Rent payment of ₹ " + amount + " initiated");
     }
   </script>
 
