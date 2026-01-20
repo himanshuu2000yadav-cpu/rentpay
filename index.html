@@ -7,32 +7,40 @@
 
 <style>
 :root{
-  --bg:#0b0c10;
-  --card:#15171c;
-  --border:#23252c;
+  --bg:#f5f7fb;
+  --card:#ffffff;
+  --border:#e5e7eb;
   --primary:#1a73e8;
-  --text:#e5e7eb;
-  --muted:#9ca3af;
-  --green:#22c55e;
-  --red:#ef4444;
+  --text:#111827;
+  --muted:#6b7280;
+  --green:#16a34a;
+  --red:#dc2626;
 }
+
 *{box-sizing:border-box}
+
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Helvetica,Arial;
-  background:linear-gradient(180deg,#0b0c10,#111318);
+  background:var(--bg);
   color:var(--text);
 }
+
 .container{
   width:420px;
   margin:40px auto;
   background:var(--card);
   border:1px solid var(--border);
-  border-radius:18px;
+  border-radius:16px;
   padding:22px;
 }
-h1{font-size:22px;margin-bottom:18px}
 
+h1{
+  font-size:22px;
+  margin-bottom:18px;
+}
+
+/* fields */
 .field{margin-bottom:14px}
 .field label{
   font-size:13px;
@@ -43,8 +51,8 @@ h1{font-size:22px;margin-bottom:18px}
 .field input,.field select{
   width:100%;
   padding:13px 14px;
-  border-radius:12px;
-  background:#0f1116;
+  border-radius:10px;
+  background:#fff;
   border:1px solid var(--border);
   color:var(--text);
   font-size:15px;
@@ -54,19 +62,19 @@ h1{font-size:22px;margin-bottom:18px}
   outline:none;
 }
 
-/* validation text */
+/* validation */
 .validation{
   margin-top:6px;
   font-size:12.5px;
-  font-weight:500;
 }
 .validation.neutral{color:var(--muted)}
 .validation.valid{color:var(--green)}
 .validation.invalid{color:var(--red)}
 
+/* payment box */
 .payment-box{
   border:1px solid var(--border);
-  border-radius:14px;
+  border-radius:12px;
   overflow:hidden;
   margin-top:10px;
 }
@@ -79,8 +87,12 @@ h1{font-size:22px;margin-bottom:18px}
 .pay-option:last-child{border-bottom:none}
 .pay-left{display:flex;gap:10px;align-items:center}
 .pay-option input{accent-color:var(--primary)}
-.pay-option span{font-size:13px;color:var(--muted)}
+.pay-option span{
+  font-size:13px;
+  color:var(--muted);
+}
 
+/* charges */
 .dropdown{
   margin-top:14px;
   font-size:14px;
@@ -91,8 +103,8 @@ h1{font-size:22px;margin-bottom:18px}
   display:none;
   margin-top:10px;
   padding:14px;
-  background:#0f1116;
-  border-radius:12px;
+  background:#f9fafb;
+  border-radius:10px;
   border:1px solid var(--border);
 }
 .charges div{
@@ -102,12 +114,13 @@ h1{font-size:22px;margin-bottom:18px}
 }
 .total{font-weight:600}
 
+/* button */
 button{
   width:100%;
   margin-top:20px;
   padding:14px;
   border:none;
-  border-radius:14px;
+  border-radius:12px;
   background:linear-gradient(180deg,#1a73e8,#1558b0);
   color:#fff;
   font-size:16px;
@@ -115,6 +128,7 @@ button{
   cursor:pointer;
 }
 
+/* footer */
 .footer{
   margin-top:22px;
   padding-top:14px;
@@ -173,7 +187,9 @@ button{
 <div class="field">
   <label>Rent Month</label>
   <select id="rentMonth">
-    <option>January</option><option>February</option><option>March</option>
+    <option>January</option>
+    <option>February</option>
+    <option>March</option>
   </select>
 </div>
 
@@ -222,7 +238,8 @@ button{
 
 <script>
 function toggleCharges(){
-  charges.style.display = charges.style.display==="block"?"none":"block";
+  charges.style.display =
+    charges.style.display==="block"?"none":"block";
 }
 
 function calculate(){
@@ -242,15 +259,14 @@ function validateTenantPayTo(){
   const val = tenantPayTo.value.trim();
   const msg = tenantValidation;
 
-  if(val.length === 0){
+  if(val.length===0){
     msg.className="validation neutral";
     msg.innerText="Enter tenant UPI ID (example@upi) or bank reference";
     return false;
   }
-
   if(val.includes("@")){
-    const upiRegex=/^[a-zA-Z0-9._-]+@[a-zA-Z]{2,}$/;
-    if(upiRegex.test(val)){
+    const re=/^[a-zA-Z0-9._-]+@[a-zA-Z]{2,}$/;
+    if(re.test(val)){
       msg.className="validation valid";
       msg.innerText="Looks like a valid UPI ID";
       return true;
@@ -260,7 +276,6 @@ function validateTenantPayTo(){
       return false;
     }
   }
-
   msg.className="validation neutral";
   msg.innerText="Bank account or reference will be verified during payment";
   return true;
@@ -271,12 +286,11 @@ function payNow(){
     alert("Please enter a valid tenant UPI ID or bank account");
     return;
   }
-
   let total = calculate();
-  if(total<=0) return alert("Enter valid rent amount");
+  if(total<=0){alert("Enter valid rent amount");return;}
 
   new Razorpay({
-    key:"rzp_live_S5dHw17cdqIxuk",
+    key:"YOUR_RAZORPAY_KEY",
     amount:Math.round(total*100),
     currency:"INR",
     name:"Easy Rent Pay",
