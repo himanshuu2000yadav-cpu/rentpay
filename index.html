@@ -2,54 +2,41 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Rent Payment</title>
+<title>Easy Rent Pay</title>
 
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
-/* ===== Apple Liquid Glass Theme ===== */
+/* ===== Apple-like Liquid Glass UI (CSS only) ===== */
 :root{
-  --glass-bg: rgba(255,255,255,0.65);
-  --glass-border: rgba(255,255,255,0.35);
   --primary:#007aff;
   --text:#1c1c1e;
   --muted:#6e6e73;
+  --glass-bg:rgba(255,255,255,.65);
+  --glass-border:rgba(255,255,255,.35);
 }
-
-*{box-sizing:border-box;}
-
+*{box-sizing:border-box}
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",Helvetica,Arial,sans-serif;
   background:linear-gradient(180deg,#f5f5f7,#e9ebef);
   color:var(--text);
 }
-
-/* Card */
 .container{
   width:420px;
   margin:40px auto;
   padding:24px;
   background:var(--glass-bg);
   backdrop-filter:blur(18px) saturate(180%);
-  -webkit-backdrop-filter:blur(18px) saturate(180%);
   border-radius:20px;
   border:1px solid var(--glass-border);
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  box-shadow:0 10px 30px rgba(0,0,0,.08);
 }
-
-h1{
-  font-size:22px;
-  font-weight:600;
-  margin-bottom:20px;
-}
-
-/* Fields */
-.field{margin-bottom:16px;}
+h1{font-size:22px;margin-bottom:20px}
+.field{margin-bottom:16px}
 .field label{
   display:block;
   font-size:13px;
-  font-weight:500;
   color:var(--muted);
   margin-bottom:6px;
 }
@@ -57,43 +44,32 @@ h1{
   width:100%;
   padding:14px;
   border-radius:14px;
-  border:1px solid rgba(0,0,0,0.12);
-  background:rgba(255,255,255,0.8);
+  border:1px solid rgba(0,0,0,.12);
   font-size:15px;
-  outline:none;
-  transition:.25s;
 }
 .field input:focus,.field select:focus{
   border-color:var(--primary);
-  box-shadow:0 0 0 4px rgba(0,122,255,0.15);
-  background:#fff;
+  box-shadow:0 0 0 4px rgba(0,122,255,.15);
+  outline:none;
 }
-
-/* Payment box */
 .payment-box{
-  margin-top:10px;
+  border:1px solid var(--glass-border);
   border-radius:18px;
   overflow:hidden;
-  background:rgba(255,255,255,0.6);
-  border:1px solid var(--glass-border);
+  margin-top:10px;
 }
 .pay-option{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:16px 18px;
-  border-bottom:1px solid rgba(0,0,0,0.06);
+  padding:16px;
+  border-bottom:1px solid rgba(0,0,0,.06);
 }
-.pay-option:last-child{border-bottom:none;}
-.pay-left{display:flex;align-items:center;gap:10px;}
-.pay-option input{accent-color:var(--primary);}
-.pay-option span{font-size:13px;color:var(--muted);}
-
-/* Charges */
+.pay-option:last-child{border-bottom:none}
+.pay-left{display:flex;gap:10px}
+.pay-option input{accent-color:var(--primary)}
+.pay-option span{font-size:13px;color:var(--muted)}
 .dropdown{
   margin-top:16px;
-  font-size:14px;
-  font-weight:500;
   color:var(--primary);
   cursor:pointer;
 }
@@ -102,55 +78,39 @@ h1{
   margin-top:12px;
   padding:16px;
   border-radius:16px;
-  background:rgba(255,255,255,0.65);
-  border:1px solid var(--glass-border);
+  background:rgba(255,255,255,.7);
 }
 .charges div{
   display:flex;
   justify-content:space-between;
-  font-size:14px;
-  margin-bottom:8px;
+  margin-bottom:6px;
 }
-.charges .total{font-weight:600;}
-
-/* Button */
+.total{font-weight:600}
 button{
   width:100%;
   margin-top:22px;
   padding:16px;
-  border-radius:18px;
   border:none;
+  border-radius:18px;
   background:linear-gradient(180deg,#0a84ff,#007aff);
   color:#fff;
   font-size:16px;
   font-weight:600;
   cursor:pointer;
 }
-button:active{transform:scale(.98);}
-
-/* Footer */
 .footer{
-  margin-top:26px;
+  margin-top:24px;
   padding-top:16px;
   text-align:center;
-  border-top:1px solid rgba(0,0,0,0.08);
-}
-.footer h4{
-  font-size:14px;
-  font-weight:600;
-  margin-bottom:6px;
-}
-.footer p{
-  font-size:12px;
-  color:var(--muted);
-  margin:4px 0;
+  border-top:1px solid rgba(0,0,0,.08);
 }
 .footer a{
   font-size:12px;
   color:var(--primary);
-  text-decoration:none;
   margin:0 6px;
+  text-decoration:none;
 }
+.footer p{font-size:12px;color:var(--muted)}
 </style>
 </head>
 
@@ -159,108 +119,121 @@ button:active{transform:scale(.98);}
 <div class="container">
 <h1>Rent Payment</h1>
 
+<!-- CUSTOMER DETAILS -->
 <div class="field">
   <label>Customer Name</label>
-  <input type="text" placeholder="Enter customer name">
+  <input id="customerName" placeholder="Enter customer name">
 </div>
 
 <div class="field">
   <label>Mobile Number</label>
-  <input type="tel" placeholder="Enter mobile number">
+  <input id="mobile" placeholder="10 digit mobile number">
+</div>
+
+<!-- TENANT DETAILS -->
+<div class="field">
+  <label>Tenant Name</label>
+  <input id="tenantName" placeholder="Enter tenant name">
 </div>
 
 <div class="field">
-  <label>Tenant Name</label>
-  <input type="text" placeholder="Enter tenant name">
+  <label>Tenant UPI ID / Bank Ref</label>
+  <input id="tenantPayTo" placeholder="tenant@upi or account ref">
 </div>
 
 <div class="field">
   <label>Property / Flat Details</label>
-  <input type="text" placeholder="Flat / House No.">
+  <input id="property" placeholder="Flat / House No.">
 </div>
 
 <div class="field">
   <label>Rent Month</label>
-  <select>
+  <select id="rentMonth">
     <option>January</option><option>February</option><option>March</option>
   </select>
 </div>
 
 <div class="field">
   <label>Rent Amount (₹)</label>
-  <input type="number" id="rentAmount" oninput="calculate()">
+  <input id="rentAmount" type="number" oninput="calculate()">
 </div>
 
+<!-- PAYMENT MODE -->
 <div class="payment-box">
   <div class="pay-option">
-    <div class="pay-left"><input type="radio" name="pay" value="0" checked onclick="calculate()"> UPI</div>
+    <div class="pay-left"><input type="radio" name="pay" value="0" checked onclick="calculate()">UPI</div>
     <span>0%</span>
   </div>
   <div class="pay-option">
-    <div class="pay-left"><input type="radio" name="pay" value="1.2" onclick="calculate()"> Debit Card</div>
+    <div class="pay-left"><input type="radio" name="pay" value="1.2" onclick="calculate()">Debit Card</div>
     <span>1.2%</span>
   </div>
   <div class="pay-option">
-    <div class="pay-left"><input type="radio" name="pay" value="2.5" onclick="calculate()"> Credit Card</div>
+    <div class="pay-left"><input type="radio" name="pay" value="2.5" onclick="calculate()">Credit Card</div>
     <span>2.5%</span>
-  </div>
-  <div class="pay-option">
-    <div class="pay-left"><input type="radio" name="pay" value="0.9" onclick="calculate()"> Net Banking</div>
-    <span>0.9%</span>
   </div>
 </div>
 
 <div class="dropdown" onclick="toggleCharges()">View Charges Breakdown</div>
 
-<div class="charges" id="chargesBox">
-  <div><span>Rent Amount</span><span id="r1">₹0</span></div>
+<div class="charges" id="charges">
+  <div><span>Rent</span><span id="r1">₹0</span></div>
   <div><span>Convenience Fee</span><span id="r2">₹0</span></div>
   <div><span>GST (18%)</span><span id="r3">₹0</span></div>
-  <div class="total"><span>Total Payable</span><span id="r4">₹0</span></div>
+  <div class="total"><span>Total</span><span id="r4">₹0</span></div>
 </div>
 
 <button onclick="payNow()">Pay Now</button>
 
 <div class="footer">
-  <h4>Easy Rent Pay</h4>
-  <p>Fast & secure rent payments</p>
-  <p>
-    <a href="#">Privacy Policy</a> |
-    <a href="#">Refund Policy</a> |
-    <a href="#">Terms</a> |
-    <a href="#">Contact</a>
-  </p>
+  <p>Easy Rent Pay</p>
+  <a href="#">Privacy</a> |
+  <a href="#">Refund</a> |
+  <a href="#">Terms</a> |
+  <a href="#">Contact</a>
 </div>
 </div>
 
 <script>
 function toggleCharges(){
-  let b=document.getElementById("chargesBox");
-  b.style.display=b.style.display==="block"?"none":"block";
+  charges.style.display = charges.style.display==="block"?"none":"block";
 }
+
 function calculate(){
-  let rent=Number(document.getElementById("rentAmount").value||0);
-  let p=document.querySelector('input[name="pay"]:checked').value;
-  let fee=rent*p/100;
-  let gst=fee*0.18;
-  let total=rent+fee+gst;
+  let rent = Number(rentAmount.value||0);
+  let p = document.querySelector('input[name="pay"]:checked').value;
+  let fee = rent*p/100;
+  let gst = fee*0.18;
+  let total = rent+fee+gst;
   r1.innerText="₹"+rent.toFixed(2);
   r2.innerText="₹"+fee.toFixed(2);
   r3.innerText="₹"+gst.toFixed(2);
   r4.innerText="₹"+total.toFixed(2);
   return total;
 }
+
 function payNow(){
-  let total=calculate();
-  if(total<=0){alert("Enter rent amount");return;}
-  new Razorpay({
-    key:"rzp_live_S5dHw17cdqIxuk",
-    amount:Math.round(total*100),
-    currency:"INR",
-    name:"Easy Rent Pay",
-    description:"Rent Payment",
-    handler:r=>alert("Payment Success: "+r.razorpay_payment_id)
-  }).open();
+  let total = calculate();
+  if(total<=0) return alert("Enter valid rent amount");
+
+  let options = {
+    key: "rzp_live_S5dHw17cdqIxuk",
+    amount: Math.round(total*100),
+    currency: "INR",
+    name: "Easy Rent Pay",
+    description:
+      "Rent: "+rentMonth.value+
+      " | Tenant: "+tenantName.value+
+      " | Pay To: "+tenantPayTo.value,
+    prefill:{
+      name: customerName.value,
+      contact: mobile.value
+    },
+    method:{ upi:true, card:true, netbanking:true },
+    handler: res => alert("Payment Success: "+res.razorpay_payment_id)
+  };
+
+  new Razorpay(options).open();
 }
 </script>
 
