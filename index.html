@@ -4,83 +4,86 @@
 <meta charset="UTF-8">
 <title>Rent Payment</title>
 
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background:#f4f6fb;
+  font-family:Arial,sans-serif;
+  background:#f4f6fb;
 }
 .container{
-    width:400px;
-    margin:30px auto;
-    background:#fff;
-    padding:20px;
-    border-radius:12px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  width:420px;
+  margin:30px auto;
+  background:#fff;
+  padding:20px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-h2{
-    margin-bottom:15px;
-}
-.section{
-    margin-bottom:15px;
-}
+h2{margin-bottom:10px;}
+.section{margin-bottom:12px;}
 .section label{
-    font-size:13px;
-    color:#555;
-    display:block;
-    margin-bottom:5px;
+  font-size:13px;
+  color:#555;
+  display:block;
+  margin-bottom:4px;
 }
-.section input, .section select{
-    width:100%;
-    padding:10px;
-    border-radius:8px;
-    border:1px solid #ccc;
+.section input,.section select{
+  width:100%;
+  padding:10px;
+  border-radius:8px;
+  border:1px solid #ccc;
 }
+
 .pay-option{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    border:1px solid #ddd;
-    padding:12px;
-    border-radius:8px;
-    margin-bottom:10px;
-    cursor:pointer;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border:1px solid #ddd;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:8px;
+  cursor:pointer;
 }
+.pay-option span{
+  font-size:13px;
+  color:#555;
+}
+
 .dropdown{
-    color:#4f46e5;
-    cursor:pointer;
-    font-size:14px;
+  color:#4f46e5;
+  cursor:pointer;
+  font-size:14px;
+  margin:10px 0;
 }
 .charges{
-    display:none;
-    background:#f9f9f9;
-    padding:10px;
-    border-radius:8px;
-    margin-top:10px;
+  display:none;
+  background:#f9f9f9;
+  padding:10px;
+  border-radius:8px;
 }
 .charges div{
-    display:flex;
-    justify-content:space-between;
-    margin:6px 0;
+  display:flex;
+  justify-content:space-between;
+  margin:6px 0;
 }
-.total{
-    font-weight:bold;
-}
+.total{font-weight:bold;}
+
 button{
-    width:100%;
-    background:#4f46e5;
-    color:white;
-    padding:12px;
-    border:none;
-    border-radius:8px;
-    font-size:16px;
-    cursor:pointer;
-    margin-top:15px;
+  width:100%;
+  background:#4f46e5;
+  color:#fff;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  margin-top:15px;
+  cursor:pointer;
 }
 footer{
-    text-align:center;
-    font-size:12px;
-    color:#777;
-    margin-top:15px;
+  text-align:center;
+  font-size:12px;
+  color:#777;
+  margin-top:15px;
 }
 </style>
 </head>
@@ -90,91 +93,79 @@ footer{
 <div class="container">
 <h2>Rent Payment</h2>
 
-<!-- DETAILS -->
+<!-- CX DETAILS -->
 <div class="section">
-<label>Tenant Name</label>
-<input type="text" placeholder="Enter tenant name">
+<label>Customer Name</label>
+<input type="text" id="customerName" placeholder="Enter customer name">
 </div>
 
 <div class="section">
-<label>Owner / Landlord Name</label>
-<input type="text" placeholder="Enter owner name">
+<label>Mobile Number</label>
+<input type="tel" id="mobile" placeholder="Enter mobile number">
+</div>
+
+<!-- TENANT DETAILS -->
+<div class="section">
+<label>Tenant Name</label>
+<input type="text" id="tenantName" placeholder="Enter tenant name">
 </div>
 
 <div class="section">
 <label>Property / Flat Details</label>
-<input type="text" placeholder="Flat / House no.">
+<input type="text" id="property" placeholder="Flat / House No.">
 </div>
 
 <div class="section">
 <label>Rent Month</label>
-<select>
-<option>January</option>
-<option>February</option>
-<option>March</option>
-<option>April</option>
-<option>May</option>
-<option>June</option>
-<option>July</option>
-<option>August</option>
-<option>September</option>
-<option>October</option>
-<option>November</option>
-<option>December</option>
+<select id="rentMonth">
+  <option>January</option><option>February</option><option>March</option>
+  <option>April</option><option>May</option><option>June</option>
+  <option>July</option><option>August</option><option>September</option>
+  <option>October</option><option>November</option><option>December</option>
 </select>
 </div>
 
 <div class="section">
 <label>Rent Amount (₹)</label>
-<input type="number" id="rent" oninput="calculate()">
+<input type="number" id="rentAmount" oninput="calculate()">
 </div>
 
-<!-- PAYMENT METHODS -->
+<!-- PAYMENT MODES -->
 <div class="pay-option">
-<label>
-<input type="radio" name="pay" value="0" checked onclick="calculate()"> UPI
-</label>
+<label><input type="radio" name="pay" value="0" checked onclick="calculate()"> UPI</label>
 <span>0%</span>
 </div>
 
 <div class="pay-option">
-<label>
-<input type="radio" name="pay" value="1.2" onclick="calculate()"> Debit Card
-</label>
+<label><input type="radio" name="pay" value="1.2" onclick="calculate()"> Debit Card</label>
 <span>1.2%</span>
 </div>
 
 <div class="pay-option">
-<label>
-<input type="radio" name="pay" value="2.5" onclick="calculate()"> Credit Card
-</label>
+<label><input type="radio" name="pay" value="2.5" onclick="calculate()"> Credit Card</label>
 <span>2.5%</span>
 </div>
 
 <div class="pay-option">
-<label>
-<input type="radio" name="pay" value="0.9" onclick="calculate()"> Net Banking
-</label>
+<label><input type="radio" name="pay" value="0.9" onclick="calculate()"> Net Banking</label>
 <span>0.9%</span>
 </div>
 
 <!-- CHARGES -->
-<div class="dropdown" onclick="toggleCharges()">
-View Charges Breakdown ▼
-</div>
+<div class="dropdown" onclick="toggleCharges()">View Charges Breakdown ▼</div>
 
 <div class="charges" id="chargesBox">
-<div><span>Rent</span><span id="r1">₹0</span></div>
-<div><span>Convenience Fee</span><span id="r2">₹0</span></div>
-<div><span>GST (18%)</span><span id="r3">₹0</span></div>
-<hr>
-<div class="total"><span>Total Payable</span><span id="r4">₹0</span></div>
+  <div><span>Rent Amount</span><span id="r1">₹0</span></div>
+  <div><span>Convenience Fee</span><span id="r2">₹0</span></div>
+  <div><span>GST (18%)</span><span id="r3">₹0</span></div>
+  <hr>
+  <div class="total"><span>Total Payable</span><span id="r4">₹0</span></div>
 </div>
 
-<button>Pay Rent</button>
+<button onclick="payNow()">Pay Now</button>
 
 <footer>
-Secure Payment • UPI | Cards | Net Banking
+100% Secure Payments • UPI | Cards | Net Banking
 </footer>
 </div>
 
@@ -185,7 +176,7 @@ function toggleCharges(){
 }
 
 function calculate(){
-  let rent=Number(document.getElementById("rent").value);
+  let rent=Number(document.getElementById("rentAmount").value||0);
   let percent=document.querySelector('input[name="pay"]:checked').value;
 
   let fee=rent*percent/100;
@@ -196,7 +187,37 @@ function calculate(){
   document.getElementById("r2").innerText="₹"+fee.toFixed(2);
   document.getElementById("r3").innerText="₹"+gst.toFixed(2);
   document.getElementById("r4").innerText="₹"+total.toFixed(2);
+
+  return total;
 }
+
+function payNow(){
+  let total=calculate();
+  if(total<=0){
+    alert("Enter valid rent amount");
+    return;
+  }
+
+  let options={
+    key:"rzp_live_S5dHw17cdqIxuk",
+    amount:Math.round(total*100),
+    currency:"INR",
+    name:"Rent Payment",
+    description:"Rent for "+document.getElementById("rentMonth").value,
+    prefill:{
+      name:document.getElementById("customerName").value,
+      contact:document.getElementById("mobile").value
+    },
+    handler:function(response){
+      alert("Payment Successful: "+response.razorpay_payment_id);
+    }
+  };
+
+  let rzp=new Razorpay(options);
+  rzp.open();
+}
+
+window.onload=calculate;
 </script>
 
 </body>
