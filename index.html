@@ -136,6 +136,31 @@ button{
   color:#1a73e8;
   text-decoration:none;
   margin:0 6px;
+  cursor:pointer;
+}
+
+/* modal */
+.modal{
+  display:none;
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.5);
+  z-index:9999;
+}
+.modal-content{
+  background:#fff;
+  max-width:520px;
+  width:90%;
+  margin:60px auto;
+  padding:20px;
+  border-radius:12px;
+  max-height:80vh;
+  overflow-y:auto;
+}
+.close{
+  float:right;
+  font-size:22px;
+  cursor:pointer;
 }
 </style>
 </head>
@@ -145,7 +170,6 @@ button{
 <div class="container">
 <h1>Rent Payment</h1>
 
-<!-- Customer Details -->
 <div class="field">
   <label>Customer Name</label>
   <input id="customerName">
@@ -156,13 +180,11 @@ button{
   <input id="mobile">
 </div>
 
-<!-- Tenant Name -->BOLD
 <div class="field">
   <label>Tenant Name</label>
   <input id="tenantName">
 </div>
 
-<!-- 🔥 PAY TENANT VIA (ONLY UPDATED SECTION) -->
 <div class="field">
   <label>Pay Tenant Via</label>
   <select id="payType" onchange="switchPayType()">
@@ -171,45 +193,22 @@ button{
   </select>
 </div>
 
-<!-- UPI -->
 <div id="upiSection" class="field">
   <label>Tenant UPI ID</label>
-  <input
-    id="upiInput"
-    placeholder="example@upi"
-    maxlength="30"
-    oninput="validateUPI()"
-  >
-  <div id="upiMsg" class="validation">
-    Enter tenant UPI ID (example@upi)
-  </div>
+  <input id="upiInput" placeholder="example@upi" oninput="validateUPI()">
+  <div id="upiMsg" class="validation">Enter tenant UPI ID</div>
 </div>
 
-<!-- BANK -->
 <div id="bankSection" class="field" style="display:none">
   <label>Tenant Bank Details</label>
-
-  <input
-    id="accountNumber"
-    placeholder="Account Number"
-    maxlength="18"
-    oninput="this.value=this.value.replace(/[^0-9]/g,'')"
-    style="margin-bottom:8px"
-  >
-
-  <input
-    id="ifsc"
-    placeholder="IFSC Code (e.g. HDFC0123456)"
-    maxlength="11"
-    oninput="validateIFSC()"
-  >
-
-  <div id="bankMsg" class="validation">
-    Enter valid account number and IFSC
-  </div>
+  <input id="accountNumber" placeholder="Account Number"
+    maxlength="18" oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+    style="margin-bottom:8px">
+  <input id="ifsc" placeholder="IFSC Code" maxlength="11"
+    oninput="validateIFSC()">
+  <div id="bankMsg" class="validation">Enter valid account number and IFSC</div>
 </div>
 
-<!-- Rest SAME -->
 <div class="field">
   <label>Property / Flat Details</label>
   <input id="property">
@@ -262,14 +261,23 @@ button{
 <button onclick="payNow()">Pay Now</button>
 
 <div class="footer">
-  <p>Easy Rent Pay</p>
+  <p><strong>Easy Rent Pay</strong></p>
   <p>
-    <a href="#">Privacy</a> |
-    <a href="#">Refund</a> |
-    <a href="#">Terms</a> |
-    <a href="#">Contact</a>
+    <a onclick="openModal('privacy')">Privacy</a> |
+    <a onclick="openModal('refund')">Refund</a> |
+    <a onclick="openModal('terms')">Terms</a> |
+    <a onclick="openModal('contact')">Contact</a>
   </p>
+  <p>Payments are processed securely via RBI-compliant partners</p>
 </div>
+</div>
+
+<!-- MODAL -->
+<div id="policyModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div id="modalBody"></div>
+  </div>
 </div>
 
 <script>
@@ -277,7 +285,6 @@ function switchPayType(){
   upiSection.style.display = payType.value==="upi"?"block":"none";
   bankSection.style.display = payType.value==="bank"?"block":"none";
 }
-
 function validateUPI(){
   const re=/^[a-zA-Z0-9._-]+@[a-zA-Z]{2,}$/;
   if(re.test(upiInput.value)){
@@ -286,10 +293,9 @@ function validateUPI(){
     return true;
   }
   upiMsg.className="validation";
-  upiMsg.innerText="Enter tenant UPI ID (example@upi)";
+  upiMsg.innerText="Enter tenant UPI ID";
   return false;
 }
-
 function validateIFSC(){
   const re=/^[A-Z]{4}0[A-Z0-9]{6}$/;
   if(re.test(ifsc.value.toUpperCase())){
@@ -301,33 +307,28 @@ function validateIFSC(){
   bankMsg.innerText="Enter valid account number and IFSC";
   return false;
 }
-
 function toggleCharges(){
-  charges.style.display =
-    charges.style.display==="block"?"none":"block";
+  charges.style.display = charges.style.display==="block"?"none":"block";
 }
-
 function calculate(){
-  let rent = Number(rentAmount.value||0);
-  let p = document.querySelector('input[name="pay"]:checked').value;
-  let fee = rent*p/100;
-  let gst = fee*0.18;
-  let total = rent+fee+gst;
+  let rent=Number(rentAmount.value||0);
+  let p=document.querySelector('input[name="pay"]:checked').value;
+  let fee=rent*p/100;
+  let gst=fee*0.18;
+  let total=rent+fee+gst;
   r1.innerText="₹"+rent.toFixed(2);
   r2.innerText="₹"+fee.toFixed(2);
   r3.innerText="₹"+gst.toFixed(2);
   r4.innerText="₹"+total.toFixed(2);
   return total;
 }
-
 function payNow(){
-  let total = calculate();
-  if(total<=0){ alert("Enter valid rent amount"); return; }
+  let total=calculate();
+  if(total<=0)return alert("Enter valid rent amount");
+  if(payType.value==="upi"&&!validateUPI())return;
+  if(payType.value==="bank"&&!validateIFSC())return;
 
-  if(payType.value==="upi" && !validateUPI()) return;
-  if(payType.value==="bank" && !validateIFSC()) return;
-
-  let payTo = payType.value==="upi"
+  let payTo=payType.value==="upi"
     ? upiInput.value
     : "A/C "+accountNumber.value+" | IFSC "+ifsc.value;
 
@@ -336,18 +337,22 @@ function payNow(){
     amount:Math.round(total*100),
     currency:"INR",
     name:"Easy Rent Pay",
-    description:
-      "Rent "+rentMonth.value+
-      " | Tenant "+tenantName.value+
-      " | Pay To "+payTo,
-    prefill:{
-      name:customerName.value,
-      contact:mobile.value
-    },
+    description:"Rent "+rentMonth.value+" | Tenant "+tenantName.value+" | Pay To "+payTo,
+    prefill:{name:customerName.value,contact:mobile.value},
     method:{upi:true,card:true,netbanking:true},
     handler:r=>alert("Payment Successful: "+r.razorpay_payment_id)
   }).open();
 }
+function openModal(type){
+  let html="";
+  if(type==="privacy")html="<h3>Privacy Policy</h3><p>We collect only necessary details required to process rent payments securely.</p>";
+  if(type==="refund")html="<h3>Refund Policy</h3><p>Refunds are applicable only for failed or duplicate transactions.</p>";
+  if(type==="terms")html="<h3>Terms & Conditions</h3><p>Easy Rent Pay acts as a payment facilitator between payer and tenant.</p>";
+  if(type==="contact")html="<h3>Contact Us</h3><p>Email: support@easyrentpay.in<br>Phone: +91-XXXXXXXXXX</p>";
+  modalBody.innerHTML=html;
+  policyModal.style.display="block";
+}
+function closeModal(){policyModal.style.display="none";}
 </script>
 
 </body>
