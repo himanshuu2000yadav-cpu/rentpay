@@ -3,82 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <title>Easy Rent Pay</title>
-
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
-/* ===== Apple-like Liquid Glass UI (CSS only) ===== */
 :root{
-  --primary:#007aff;
-  --text:#1c1c1e;
-  --muted:#6e6e73;
-  --glass-bg:rgba(255,255,255,.65);
-  --glass-border:rgba(255,255,255,.35);
+  --bg:#0b0c10;
+  --card:#15171c;
+  --border:#23252c;
+  --primary:#1a73e8;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --success:#22c55e;
 }
+
 *{box-sizing:border-box}
 body{
   margin:0;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","SF Pro Display",Helvetica,Arial,sans-serif;
-  background:linear-gradient(180deg,#f5f5f7,#e9ebef);
+  font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text",Helvetica,Arial;
+  background:linear-gradient(180deg,#0b0c10,#111318);
   color:var(--text);
 }
+
 .container{
   width:420px;
   margin:40px auto;
-  padding:24px;
-  background:var(--glass-bg);
-  backdrop-filter:blur(18px) saturate(180%);
-  border-radius:20px;
-  border:1px solid var(--glass-border);
-  box-shadow:0 10px 30px rgba(0,0,0,.08);
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:18px;
+  padding:22px;
 }
-h1{font-size:22px;margin-bottom:20px}
-.field{margin-bottom:16px}
+
+h1{
+  font-size:22px;
+  margin-bottom:18px;
+}
+
+.field{
+  margin-bottom:14px;
+}
 .field label{
-  display:block;
   font-size:13px;
   color:var(--muted);
+  display:block;
   margin-bottom:6px;
 }
 .field input,.field select{
   width:100%;
-  padding:14px;
-  border-radius:14px;
-  border:1px solid rgba(0,0,0,.12);
+  padding:13px 14px;
+  border-radius:12px;
+  background:#0f1116;
+  border:1px solid var(--border);
+  color:var(--text);
   font-size:15px;
 }
 .field input:focus,.field select:focus{
   border-color:var(--primary);
-  box-shadow:0 0 0 4px rgba(0,122,255,.15);
   outline:none;
 }
+
+/* Payment box */
 .payment-box{
-  border:1px solid var(--glass-border);
-  border-radius:18px;
+  border:1px solid var(--border);
+  border-radius:14px;
   overflow:hidden;
   margin-top:10px;
 }
 .pay-option{
   display:flex;
   justify-content:space-between;
-  padding:16px;
-  border-bottom:1px solid rgba(0,0,0,.06);
+  padding:14px 16px;
+  border-bottom:1px solid var(--border);
 }
 .pay-option:last-child{border-bottom:none}
-.pay-left{display:flex;gap:10px}
+.pay-left{display:flex;gap:10px;align-items:center}
 .pay-option input{accent-color:var(--primary)}
-.pay-option span{font-size:13px;color:var(--muted)}
+.pay-option span{
+  font-size:13px;
+  color:var(--muted);
+}
+
+/* Charges */
 .dropdown{
-  margin-top:16px;
+  margin-top:14px;
+  font-size:14px;
   color:var(--primary);
   cursor:pointer;
 }
 .charges{
   display:none;
-  margin-top:12px;
-  padding:16px;
-  border-radius:16px;
-  background:rgba(255,255,255,.7);
+  margin-top:10px;
+  padding:14px;
+  background:#0f1116;
+  border-radius:12px;
+  border:1px solid var(--border);
 }
 .charges div{
   display:flex;
@@ -86,31 +103,45 @@ h1{font-size:22px;margin-bottom:20px}
   margin-bottom:6px;
 }
 .total{font-weight:600}
+
+/* Validation line */
+.validation{
+  margin-top:10px;
+  font-size:12px;
+  color:var(--success);
+}
+
+/* Button */
 button{
   width:100%;
-  margin-top:22px;
-  padding:16px;
+  margin-top:20px;
+  padding:14px;
   border:none;
-  border-radius:18px;
-  background:linear-gradient(180deg,#0a84ff,#007aff);
+  border-radius:14px;
+  background:linear-gradient(180deg,#1a73e8,#1558b0);
   color:#fff;
   font-size:16px;
   font-weight:600;
   cursor:pointer;
 }
+
+/* Footer */
 .footer{
-  margin-top:24px;
-  padding-top:16px;
+  margin-top:22px;
+  padding-top:14px;
+  border-top:1px solid var(--border);
   text-align:center;
-  border-top:1px solid rgba(0,0,0,.08);
+}
+.footer p{
+  font-size:12px;
+  color:var(--muted);
 }
 .footer a{
   font-size:12px;
   color:var(--primary);
-  margin:0 6px;
   text-decoration:none;
+  margin:0 6px;
 }
-.footer p{font-size:12px;color:var(--muted)}
 </style>
 </head>
 
@@ -119,31 +150,33 @@ button{
 <div class="container">
 <h1>Rent Payment</h1>
 
-<!-- CUSTOMER DETAILS -->
 <div class="field">
   <label>Customer Name</label>
-  <input id="customerName" placeholder="Enter customer name">
+  <input id="customerName">
 </div>
 
 <div class="field">
   <label>Mobile Number</label>
-  <input id="mobile" placeholder="10 digit mobile number">
+  <input id="mobile">
 </div>
 
-<!-- TENANT DETAILS -->
 <div class="field">
   <label>Tenant Name</label>
-  <input id="tenantName" placeholder="Enter tenant name">
+  <input id="tenantName">
 </div>
 
 <div class="field">
-  <label>Tenant UPI ID / Bank Ref</label>
-  <input id="tenantPayTo" placeholder="tenant@upi or account ref">
+  <label>Tenant UPI ID / Bank Account</label>
+  <input id="tenantPayTo" placeholder="example@upi or bank reference">
+</div>
+
+<div class="validation">
+✔ Tenant UPI / Account details are required for correct rent settlement
 </div>
 
 <div class="field">
   <label>Property / Flat Details</label>
-  <input id="property" placeholder="Flat / House No.">
+  <input id="property">
 </div>
 
 <div class="field">
@@ -158,7 +191,6 @@ button{
   <input id="rentAmount" type="number" oninput="calculate()">
 </div>
 
-<!-- PAYMENT MODE -->
 <div class="payment-box">
   <div class="pay-option">
     <div class="pay-left"><input type="radio" name="pay" value="0" checked onclick="calculate()">UPI</div>
@@ -187,11 +219,15 @@ button{
 
 <div class="footer">
   <p>Easy Rent Pay</p>
-  <a href="#">Privacy</a> |
-  <a href="#">Refund</a> |
-  <a href="#">Terms</a> |
-  <a href="#">Contact</a>
+  <p>
+    <a href="#">Privacy</a> |
+    <a href="#">Refund</a> |
+    <a href="#">Terms</a> |
+    <a href="#">Contact</a>
+  </p>
+  <p>Payments are processed securely via RBI-compliant partners</p>
 </div>
+
 </div>
 
 <script>
@@ -214,26 +250,17 @@ function calculate(){
 
 function payNow(){
   let total = calculate();
-  if(total<=0) return alert("Enter valid rent amount");
-
-  let options = {
-    key: "rzp_live_S5dHw17cdqIxuk",
-    amount: Math.round(total*100),
-    currency: "INR",
-    name: "Easy Rent Pay",
-    description:
-      "Rent: "+rentMonth.value+
-      " | Tenant: "+tenantName.value+
-      " | Pay To: "+tenantPayTo.value,
-    prefill:{
-      name: customerName.value,
-      contact: mobile.value
-    },
-    method:{ upi:true, card:true, netbanking:true },
-    handler: res => alert("Payment Success: "+res.razorpay_payment_id)
-  };
-
-  new Razorpay(options).open();
+  if(!tenantPayTo.value) return alert("Tenant UPI / Account required");
+  new Razorpay({
+    key:"rzp_live_S5dHw17cdqIxuk",
+    amount:Math.round(total*100),
+    currency:"INR",
+    name:"Easy Rent Pay",
+    description:"Rent "+rentMonth.value+" | Tenant "+tenantName.value+" | Pay To "+tenantPayTo.value,
+    prefill:{name:customerName.value,contact:mobile.value},
+    method:{upi:true,card:true,netbanking:true},
+    handler:r=>alert("Payment Success: "+r.razorpay_payment_id)
+  }).open();
 }
 </script>
 
