@@ -3,11 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <title>Easy Rent Pay</title>
-
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <style>
-/* ===== SAME CSS – NO CHANGE ===== */
 :root{
   --bg:#f5f7fb;
   --card:#ffffff;
@@ -34,28 +32,46 @@ body{
   padding:22px;
 }
 h1{font-size:22px;margin-bottom:18px}
+
+/* fields */
 .field{margin-bottom:14px}
 .field label{
   font-size:13px;
   font-weight:500;
   color:var(--text);
-  margin-bottom:6px;
   display:block;
+  margin-bottom:6px;
 }
 .field input,.field select{
   width:100%;
   padding:13px 14px;
   border-radius:10px;
+  background:#fff;
   border:1px solid var(--border);
   font-size:15px;
+  color:var(--text);
 }
-.validation{font-size:12.5px;margin-top:6px;color:var(--muted)}
+.field input::placeholder{color:#9ca3af}
+.field input:focus,.field select:focus{
+  border-color:#1a73e8;
+  outline:none;
+}
+
+/* validation */
+.validation{
+  font-size:12.5px;
+  margin-top:6px;
+  color:var(--muted);
+}
 .validation.valid{color:var(--green)}
 .validation.invalid{color:var(--red)}
+
+/* payment mode box */
 .payment-box{
   border:1px solid var(--border);
   border-radius:12px;
   overflow:hidden;
+  margin-top:10px;
 }
 .pay-option{
   display:flex;
@@ -64,16 +80,33 @@ h1{font-size:22px;margin-bottom:18px}
   border-bottom:1px solid var(--border);
 }
 .pay-option:last-child{border-bottom:none}
-.dropdown{margin-top:14px;color:#1a73e8;cursor:pointer}
+.pay-left{display:flex;gap:10px;align-items:center}
+.pay-option input{accent-color:#1a73e8}
+.pay-option span{font-size:13px;color:var(--text)}
+
+/* charges */
+.dropdown{
+  margin-top:14px;
+  font-size:14px;
+  color:#1a73e8;
+  cursor:pointer;
+}
 .charges{
   display:none;
   margin-top:10px;
   padding:14px;
-  border-radius:10px;
   background:#f9fafb;
+  border-radius:10px;
   border:1px solid var(--border);
 }
-.charges div{display:flex;justify-content:space-between;margin-bottom:6px}
+.charges div{
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:6px;
+}
+.total{font-weight:600}
+
+/* button */
 button{
   width:100%;
   margin-top:20px;
@@ -86,6 +119,24 @@ button{
   font-weight:600;
   cursor:pointer;
 }
+
+/* footer */
+.footer{
+  margin-top:22px;
+  padding-top:14px;
+  border-top:1px solid var(--border);
+  text-align:center;
+}
+.footer p{
+  font-size:12px;
+  color:var(--muted);
+}
+.footer a{
+  font-size:12px;
+  color:#1a73e8;
+  text-decoration:none;
+  margin:0 6px;
+}
 </style>
 </head>
 
@@ -94,6 +145,7 @@ button{
 <div class="container">
 <h1>Rent Payment</h1>
 
+<!-- Customer Details -->
 <div class="field">
   <label>Customer Name</label>
   <input id="customerName">
@@ -104,12 +156,13 @@ button{
   <input id="mobile">
 </div>
 
+<!-- Tenant Name -->
 <div class="field">
   <label>Tenant Name</label>
   <input id="tenantName">
 </div>
 
-<!-- PAY TENANT VIA -->
+<!-- 🔥 PAY TENANT VIA (ONLY UPDATED SECTION) -->
 <div class="field">
   <label>Pay Tenant Via</label>
   <select id="payType" onchange="switchPayType()">
@@ -119,26 +172,47 @@ button{
 </div>
 
 <!-- UPI -->
-<div id="upiSection">
-  <div class="field">
-    <label>Tenant UPI ID</label>
-    <input id="upiInput" placeholder="example@upi" oninput="validateUPI()">
+<div id="upiSection" class="field">
+  <label>Tenant UPI ID</label>
+  <input
+    id="upiInput"
+    placeholder="example@upi"
+    maxlength="30"
+    oninput="validateUPI()"
+  >
+  <div id="upiMsg" class="validation">
+    Enter tenant UPI ID (example@upi)
   </div>
-  <div id="upiMsg" class="validation">Enter tenant UPI ID</div>
 </div>
 
 <!-- BANK -->
-<div id="bankSection" style="display:none">
-  <div class="field">
-    <label>Account Number</label>
-    <input id="accountNumber" maxlength="18"
-      oninput="this.value=this.value.replace(/[^0-9]/g,'')">
+<div id="bankSection" class="field" style="display:none">
+  <label>Tenant Bank Details</label>
+
+  <input
+    id="accountNumber"
+    placeholder="Account Number"
+    maxlength="18"
+    oninput="this.value=this.value.replace(/[^0-9]/g,'')"
+    style="margin-bottom:8px"
+  >
+
+  <input
+    id="ifsc"
+    placeholder="IFSC Code (e.g. HDFC0123456)"
+    maxlength="11"
+    oninput="validateIFSC()"
+  >
+
+  <div id="bankMsg" class="validation">
+    Enter valid account number and IFSC
   </div>
-  <div class="field">
-    <label>IFSC Code</label>
-    <input id="ifsc" maxlength="11" oninput="validateIFSC()">
-  </div>
-  <div id="bankMsg" class="validation">Enter bank details</div>
+</div>
+
+<!-- Rest SAME -->
+<div class="field">
+  <label>Property / Flat Details</label>
+  <input id="property">
 </div>
 
 <div class="field">
@@ -157,15 +231,21 @@ button{
 
 <div class="payment-box">
   <div class="pay-option">
-    <div><input type="radio" name="pay" value="0" checked> UPI</div>
+    <div class="pay-left">
+      <input type="radio" name="pay" value="0" checked onclick="calculate()"> UPI
+    </div>
     <span>0%</span>
   </div>
   <div class="pay-option">
-    <div><input type="radio" name="pay" value="1.2"> Debit Card</div>
+    <div class="pay-left">
+      <input type="radio" name="pay" value="1.2" onclick="calculate()"> Debit Card
+    </div>
     <span>1.2%</span>
   </div>
   <div class="pay-option">
-    <div><input type="radio" name="pay" value="2.5"> Credit Card</div>
+    <div class="pay-left">
+      <input type="radio" name="pay" value="2.5" onclick="calculate()"> Credit Card
+    </div>
     <span>2.5%</span>
   </div>
 </div>
@@ -175,11 +255,21 @@ button{
 <div class="charges" id="charges">
   <div><span>Rent</span><span id="r1">₹0</span></div>
   <div><span>Convenience Fee</span><span id="r2">₹0</span></div>
-  <div><span>GST</span><span id="r3">₹0</span></div>
-  <div><strong>Total</strong><strong id="r4">₹0</strong></div>
+  <div><span>GST (18%)</span><span id="r3">₹0</span></div>
+  <div class="total"><span>Total</span><span id="r4">₹0</span></div>
 </div>
 
 <button onclick="payNow()">Pay Now</button>
+
+<div class="footer">
+  <p>Easy Rent Pay</p>
+  <p>
+    <a href="#">Privacy</a> |
+    <a href="#">Refund</a> |
+    <a href="#">Terms</a> |
+    <a href="#">Contact</a>
+  </p>
+</div>
 </div>
 
 <script>
@@ -196,7 +286,7 @@ function validateUPI(){
     return true;
   }
   upiMsg.className="validation";
-  upiMsg.innerText="Enter tenant UPI ID";
+  upiMsg.innerText="Enter tenant UPI ID (example@upi)";
   return false;
 }
 
@@ -208,12 +298,13 @@ function validateIFSC(){
     return true;
   }
   bankMsg.className="validation";
-  bankMsg.innerText="Enter bank details";
+  bankMsg.innerText="Enter valid account number and IFSC";
   return false;
 }
 
 function toggleCharges(){
-  charges.style.display = charges.style.display==="block"?"none":"block";
+  charges.style.display =
+    charges.style.display==="block"?"none":"block";
 }
 
 function calculate(){
@@ -229,7 +320,6 @@ function calculate(){
   return total;
 }
 
-/* ===== RAZORPAY INTEGRATION ===== */
 function payNow(){
   let total = calculate();
   if(total<=0){ alert("Enter valid rent amount"); return; }
@@ -241,30 +331,22 @@ function payNow(){
     ? upiInput.value
     : "A/C "+accountNumber.value+" | IFSC "+ifsc.value;
 
-  let options = {
-    key: "rzp_live_S5dHw17cdqIxuk",
-    amount: Math.round(total*100),
-    currency: "INR",
-    name: "Easy Rent Pay",
+  new Razorpay({
+    key:"rzp_live_S5dHw17cdqIxuk",
+    amount:Math.round(total*100),
+    currency:"INR",
+    name:"Easy Rent Pay",
     description:
       "Rent "+rentMonth.value+
       " | Tenant "+tenantName.value+
       " | Pay To "+payTo,
-    prefill: {
-      name: customerName.value,
-      contact: mobile.value
+    prefill:{
+      name:customerName.value,
+      contact:mobile.value
     },
-    method: {
-      upi:true,
-      card:true,
-      netbanking:true
-    },
-    handler: function (res) {
-      alert("Payment Successful: "+res.razorpay_payment_id);
-    }
-  };
-
-  new Razorpay(options).open();
+    method:{upi:true,card:true,netbanking:true},
+    handler:r=>alert("Payment Successful: "+r.razorpay_payment_id)
+  }).open();
 }
 </script>
 
