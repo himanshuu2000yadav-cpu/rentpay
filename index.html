@@ -2,327 +2,162 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>EasyRent Pay</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
+<title>Rent Payment</title>
 <style>
-*{box-sizing:border-box;font-family:'Inter',Arial,sans-serif}
 body{
-  margin:0;
-  background:#f6f9ff;
-  color:#1f2937;
+    font-family: Arial, sans-serif;
+    background:#f4f6fb;
 }
-
-/* HEADER */
-header{
-  background:linear-gradient(135deg,#2563eb,#1e40af);
-  color:#fff;
-  padding:32px 16px;
-}
-.header-wrap{
-  max-width:980px;
-  margin:auto;
-}
-header h1{
-  margin:0;
-  font-size:30px;
-  font-weight:800;
-}
-header p{
-  margin:6px 0 0;
-  font-size:14px;
-  opacity:.9;
-}
-
-/* CONTAINER */
 .container{
-  max-width:980px;
-  margin:30px auto;
-  padding:0 16px;
+    width:380px;
+    margin:40px auto;
+    background:#fff;
+    padding:20px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,0.1);
 }
-
-/* CARD */
-.card{
-  background:#fff;
-  border-radius:18px;
-  padding:26px;
-  margin-bottom:28px;
-  box-shadow:0 12px 28px rgba(0,0,0,.08);
+h2{
+    margin-bottom:15px;
 }
-.card h2{
-  margin:0 0 18px;
-  font-size:20px;
-  color:#1e40af;
-}
-
-/* FORM */
 label{
-  display:block;
-  font-size:14px;
-  font-weight:600;
-  margin:16px 0 6px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    border:1px solid #ddd;
+    padding:12px;
+    border-radius:8px;
+    margin-bottom:10px;
+    cursor:pointer;
 }
-input,select{
-  width:100%;
-  padding:14px;
-  border-radius:12px;
-  border:1px solid #d1d5db;
-  font-size:15px;
+label span{
+    font-size:13px;
+    color:#555;
 }
-input:focus,select:focus{
-  outline:none;
-  border-color:#2563eb;
-  box-shadow:0 0 0 3px rgba(37,99,235,.15);
+input[type="radio"]{
+    margin-right:8px;
 }
-
-.valid{border-color:#16a34a}
-.invalid{border-color:#dc2626}
-.status{font-size:13px;margin-top:4px}
-.ok{color:#16a34a}
-.err{color:#dc2626}
-
-/* PAYMENT SUMMARY */
-.summary{
-  background:#f1f5ff;
-  border-radius:14px;
-  padding:18px;
-  font-size:15px;
+.dropdown{
+    color:#4f46e5;
+    cursor:pointer;
+    font-size:14px;
+    margin:10px 0;
 }
-.summary div{
-  display:flex;
-  justify-content:space-between;
-  margin:6px 0;
+.charges{
+    background:#f9f9f9;
+    padding:10px;
+    border-radius:8px;
+    display:none;
 }
-.summary .total{
-  font-size:20px;
-  font-weight:800;
-  color:#1e40af;
-  border-top:1px dashed #c7d2fe;
-  padding-top:10px;
+.charges div{
+    display:flex;
+    justify-content:space-between;
+    margin:6px 0;
 }
-
-/* BUTTON */
+.total{
+    font-weight:bold;
+}
 button{
-  width:100%;
-  padding:16px;
-  border:none;
-  border-radius:14px;
-  background:#2563eb;
-  color:#fff;
-  font-size:18px;
-  font-weight:700;
-  margin-top:22px;
-  cursor:pointer;
+    width:100%;
+    background:#4f46e5;
+    color:white;
+    padding:12px;
+    border:none;
+    border-radius:8px;
+    margin-top:15px;
+    font-size:16px;
+    cursor:pointer;
 }
-button:hover{background:#1e40af}
-button.secondary{
-  background:#e5e7eb;
-  color:#111827;
-}
-
-/* FOOTER */
 footer{
-  background:#eef2ff;
-  padding:28px 16px;
-  text-align:center;
-  font-size:13px;
-  color:#374151;
-}
-footer a{
-  color:#1e40af;
-  text-decoration:none;
-  margin:0 6px;
-}
-
-/* MODAL */
-.modal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.55);
-  display:none;
-  align-items:center;
-  justify-content:center;
-  z-index:9999;
-}
-.modal-box{
-  background:#fff;
-  width:92%;
-  max-width:420px;
-  border-radius:22px;
-  padding:28px;
-  text-align:center;
-  box-shadow:0 25px 50px rgba(0,0,0,.3);
-}
-.modal-box .icon{
-  width:52px;
-  height:52px;
-  border-radius:50%;
-  background:#dcfce7;
-  color:#16a34a;
-  line-height:52px;
-  font-size:26px;
-  margin:0 auto 10px;
-}
-.modal-box h3{
-  margin:8px 0;
-  color:#166534;
-}
-.modal-box .box{
-  background:#f9fafb;
-  border-radius:14px;
-  padding:14px;
-  margin:16px 0;
-  text-align:left;
-}
-.modal-box .box div{
-  display:flex;
-  justify-content:space-between;
-  margin:6px 0;
-}
-.modal-box .amount{
-  font-size:26px;
-  font-weight:900;
-  color:#1e40af;
-  margin:14px 0;
+    text-align:center;
+    font-size:12px;
+    color:#777;
+    margin-top:15px;
 }
 </style>
 </head>
 
 <body>
 
-<header>
-  <div class="header-wrap">
-    <h1>🏠 EasyRent Pay</h1>
-    <p>Smart & Secure Rent Payments</p>
-  </div>
-</header>
-
 <div class="container">
+<h2>Pay Rent</h2>
 
-<!-- PAYER -->
-<div class="card">
-<h2>👤 Payer Details</h2>
-<label>Name</label>
-<input id="payer">
-<label>Mobile</label>
-<input id="mobile" maxlength="10">
-<label>Amount (₹)</label>
-<input id="amount" type="number" oninput="updateTotal()">
+<!-- RENT INPUT -->
+<input type="number" id="rentAmount" placeholder="Enter Rent Amount"
+style="width:100%;padding:10px;margin-bottom:15px;border-radius:8px;border:1px solid #ccc;"
+oninput="calculate()">
+
+<!-- PAYMENT OPTIONS -->
+<label>
+  <div>
+    <input type="radio" name="payment" value="0" checked onclick="calculate()">
+    UPI
+  </div>
+  <span>0% Charges</span>
+</label>
+
+<label>
+  <div>
+    <input type="radio" name="payment" value="1.2" onclick="calculate()">
+    Debit Card
+  </div>
+  <span>1.2%</span>
+</label>
+
+<label>
+  <div>
+    <input type="radio" name="payment" value="2.5" onclick="calculate()">
+    Credit Card
+  </div>
+  <span>2.5%</span>
+</label>
+
+<label>
+  <div>
+    <input type="radio" name="payment" value="0.9" onclick="calculate()">
+    Net Banking
+  </div>
+  <span>0.9%</span>
+</label>
+
+<!-- DROPDOWN -->
+<div class="dropdown" onclick="toggleCharges()">
+View Charges Breakdown ▼
 </div>
 
-<!-- BENEFICIARY -->
-<div class="card">
-<h2>🏢 Tenant / Owner Details</h2>
-
-<label>Name</label>
-<input id="beneficiary">
-
-<label>Payment Receive Mode</label>
-<select id="receiveVia" onchange="toggleReceive();updateTotal()">
-  <option value="">Select</option>
-  <option value="upi">UPI</option>
-  <option value="bank">Bank Transfer</option>
-</select>
-
-<div id="upiBox" style="display:none">
-  <label>UPI ID</label>
-  <input id="upi" oninput="validateUpi()">
-  <div id="upiStatus" class="status"></div>
+<!-- CHARGES -->
+<div class="charges" id="chargesBox">
+    <div><span>Rent Amount</span><span id="rentShow">₹0</span></div>
+    <div><span>Convenience Fee</span><span id="feeShow">₹0</span></div>
+    <div><span>GST (18%)</span><span id="gstShow">₹0</span></div>
+    <hr>
+    <div class="total"><span>Total Payable</span><span id="totalShow">₹0</span></div>
 </div>
 
-<div id="bankBox" style="display:none">
-  <label>Account Number</label>
-  <input id="account" oninput="validateAccount()">
-  <div id="accStatus" class="status"></div>
-
-  <label>IFSC Code</label>
-  <input id="ifsc" oninput="validateIfsc()">
-  <div id="ifscStatus" class="status"></div>
-</div>
-</div>
-
-<!-- PAYMENT -->
-<div class="card">
-<h2>💳 Payment Summary</h2>
-<div class="summary" id="summary">
-  <div><span>Amount</span><span>₹0.00</span></div>
-  <div><span>Charges</span><span>₹0.00</span></div>
-  <div class="total"><span>Total</span><span>₹0.00</span></div>
-</div>
-<button onclick="openConfirm()">Proceed to Pay</button>
-</div>
-
-</div>
+<button>Pay Now</button>
 
 <footer>
-EasyRent Pay is a payment facilitation platform only.<br><br>
-<a href="privacy.html">Privacy</a> |
-<a href="terms.html">Terms</a> |
-<a href="refund.html">Refund</a>
+100% Secure Payments • UPI | Cards | Net Banking
 </footer>
-
-<!-- CONFIRM MODAL -->
-<div class="modal" id="confirmModal">
-  <div class="modal-box">
-    <div class="icon">✔</div>
-    <h3>Confirm Payment</h3>
-    <div class="box">
-      <div><span>Payer</span><b id="cPayer"></b></div>
-      <div><span>Tenant</span><b id="cBen"></b></div>
-    </div>
-    <div class="amount">₹ <span id="cTotal"></span></div>
-    <button onclick="payNow()">Confirm & Pay</button>
-    <button class="secondary" onclick="closeConfirm()">Cancel</button>
-  </div>
 </div>
 
 <script>
-const isValidUpi=v=>v.includes("@")&&/^[a-zA-Z0-9._-]{2,50}@[a-zA-Z]{2,20}$/.test(v);
-const isValidAccount=v=>/^[0-9]{9,18}$/.test(v);
-const isValidIfsc=v=>/^[A-Z]{4}0[A-Z0-9]{6}$/.test(v.toUpperCase());
+function toggleCharges(){
+  let box=document.getElementById("chargesBox");
+  box.style.display = box.style.display==="none"?"block":"none";
+}
 
-function toggleReceive(){
-  upiBox.style.display=receiveVia.value==="upi"?"block":"none";
-  bankBox.style.display=receiveVia.value==="bank"?"block":"none";
-}
-function updateTotal(){
-  let a=Number(amount.value||0);
-  let charge=0;
-  summary.innerHTML=`
-    <div><span>Amount</span><span>₹${a.toFixed(2)}</span></div>
-    <div><span>Charges</span><span>₹${charge.toFixed(2)}</span></div>
-    <div class="total"><span>Total</span><span>₹${(a+charge).toFixed(2)}</span></div>`;
-}
-function validateUpi(){
-  upiStatus.innerHTML=isValidUpi(upi.value)?"<span class='ok'>✔ Looks valid</span>":"<span class='err'>✖ Invalid UPI</span>";
-}
-function validateAccount(){
-  accStatus.innerHTML=isValidAccount(account.value)?"<span class='ok'>✔ Looks valid</span>":"<span class='err'>✖ Invalid account</span>";
-}
-function validateIfsc(){
-  ifscStatus.innerHTML=isValidIfsc(ifsc.value)?"<span class='ok'>✔ Looks valid</span>":"<span class='err'>✖ Invalid IFSC</span>";
-}
-function openConfirm(){
-  if(!payer.value||!beneficiary.value||!amount.value){alert("Fill all details");return;}
-  if(receiveVia.value==="upi"&&!isValidUpi(upi.value)){alert("Invalid UPI");return;}
-  if(receiveVia.value==="bank"&&(!isValidAccount(account.value)||!isValidIfsc(ifsc.value))){alert("Invalid bank details");return;}
-  cPayer.innerText=payer.value;
-  cBen.innerText=beneficiary.value;
-  cTotal.innerText=amount.value;
-  confirmModal.style.display="flex";
-}
-function closeConfirm(){confirmModal.style.display="none";}
-function payNow(){
-  closeConfirm();
-  new Razorpay({
-    key:"rzp_live_S5dHw17cdqIxuk",
-    amount:Number(amount.value)*100,
-    currency:"INR",
-    handler:()=>alert("Payment Successful")
-  }).open();
+function calculate(){
+  let rent = Number(document.getElementById("rentAmount").value);
+  let payment = document.querySelector('input[name="payment"]:checked').value;
+  
+  let fee = rent * payment / 100;
+  let gst = fee * 18 / 100;
+  let total = rent + fee + gst;
+
+  document.getElementById("rentShow").innerText = "₹"+rent.toFixed(2);
+  document.getElementById("feeShow").innerText = "₹"+fee.toFixed(2);
+  document.getElementById("gstShow").innerText = "₹"+gst.toFixed(2);
+  document.getElementById("totalShow").innerText = "₹"+total.toFixed(2);
 }
 </script>
 
