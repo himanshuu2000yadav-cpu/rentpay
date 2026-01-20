@@ -3,14 +3,15 @@
 <head>
 <meta charset="UTF-8">
 <title>Rent Payment</title>
+
 <style>
 body{
     font-family: Arial, sans-serif;
     background:#f4f6fb;
 }
 .container{
-    width:380px;
-    margin:40px auto;
+    width:400px;
+    margin:30px auto;
     background:#fff;
     padding:20px;
     border-radius:12px;
@@ -19,7 +20,22 @@ body{
 h2{
     margin-bottom:15px;
 }
-label{
+.section{
+    margin-bottom:15px;
+}
+.section label{
+    font-size:13px;
+    color:#555;
+    display:block;
+    margin-bottom:5px;
+}
+.section input, .section select{
+    width:100%;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+.pay-option{
     display:flex;
     justify-content:space-between;
     align-items:center;
@@ -29,24 +45,17 @@ label{
     margin-bottom:10px;
     cursor:pointer;
 }
-label span{
-    font-size:13px;
-    color:#555;
-}
-input[type="radio"]{
-    margin-right:8px;
-}
 .dropdown{
     color:#4f46e5;
     cursor:pointer;
     font-size:14px;
-    margin:10px 0;
 }
 .charges{
+    display:none;
     background:#f9f9f9;
     padding:10px;
     border-radius:8px;
-    display:none;
+    margin-top:10px;
 }
 .charges div{
     display:flex;
@@ -63,9 +72,9 @@ button{
     padding:12px;
     border:none;
     border-radius:8px;
-    margin-top:15px;
     font-size:16px;
     cursor:pointer;
+    margin-top:15px;
 }
 footer{
     text-align:center;
@@ -79,64 +88,93 @@ footer{
 <body>
 
 <div class="container">
-<h2>Pay Rent</h2>
+<h2>Rent Payment</h2>
 
-<!-- RENT INPUT -->
-<input type="number" id="rentAmount" placeholder="Enter Rent Amount"
-style="width:100%;padding:10px;margin-bottom:15px;border-radius:8px;border:1px solid #ccc;"
-oninput="calculate()">
+<!-- DETAILS -->
+<div class="section">
+<label>Tenant Name</label>
+<input type="text" placeholder="Enter tenant name">
+</div>
 
-<!-- PAYMENT OPTIONS -->
+<div class="section">
+<label>Owner / Landlord Name</label>
+<input type="text" placeholder="Enter owner name">
+</div>
+
+<div class="section">
+<label>Property / Flat Details</label>
+<input type="text" placeholder="Flat / House no.">
+</div>
+
+<div class="section">
+<label>Rent Month</label>
+<select>
+<option>January</option>
+<option>February</option>
+<option>March</option>
+<option>April</option>
+<option>May</option>
+<option>June</option>
+<option>July</option>
+<option>August</option>
+<option>September</option>
+<option>October</option>
+<option>November</option>
+<option>December</option>
+</select>
+</div>
+
+<div class="section">
+<label>Rent Amount (₹)</label>
+<input type="number" id="rent" oninput="calculate()">
+</div>
+
+<!-- PAYMENT METHODS -->
+<div class="pay-option">
 <label>
-  <div>
-    <input type="radio" name="payment" value="0" checked onclick="calculate()">
-    UPI
-  </div>
-  <span>0% Charges</span>
+<input type="radio" name="pay" value="0" checked onclick="calculate()"> UPI
 </label>
+<span>0%</span>
+</div>
 
+<div class="pay-option">
 <label>
-  <div>
-    <input type="radio" name="payment" value="1.2" onclick="calculate()">
-    Debit Card
-  </div>
-  <span>1.2%</span>
+<input type="radio" name="pay" value="1.2" onclick="calculate()"> Debit Card
 </label>
+<span>1.2%</span>
+</div>
 
+<div class="pay-option">
 <label>
-  <div>
-    <input type="radio" name="payment" value="2.5" onclick="calculate()">
-    Credit Card
-  </div>
-  <span>2.5%</span>
+<input type="radio" name="pay" value="2.5" onclick="calculate()"> Credit Card
 </label>
+<span>2.5%</span>
+</div>
 
+<div class="pay-option">
 <label>
-  <div>
-    <input type="radio" name="payment" value="0.9" onclick="calculate()">
-    Net Banking
-  </div>
-  <span>0.9%</span>
+<input type="radio" name="pay" value="0.9" onclick="calculate()"> Net Banking
 </label>
+<span>0.9%</span>
+</div>
 
-<!-- DROPDOWN -->
+<!-- CHARGES -->
 <div class="dropdown" onclick="toggleCharges()">
 View Charges Breakdown ▼
 </div>
 
-<!-- CHARGES -->
 <div class="charges" id="chargesBox">
-    <div><span>Rent Amount</span><span id="rentShow">₹0</span></div>
-    <div><span>Convenience Fee</span><span id="feeShow">₹0</span></div>
-    <div><span>GST (18%)</span><span id="gstShow">₹0</span></div>
-    <hr>
-    <div class="total"><span>Total Payable</span><span id="totalShow">₹0</span></div>
+<div><span>Rent</span><span id="r1">₹0</span></div>
+<div><span>Convenience Fee</span><span id="r2">₹0</span></div>
+<div><span>GST (18%)</span><span id="r3">₹0</span></div>
+<hr>
+<div class="total"><span>Total Payable</span><span id="r4">₹0</span></div>
 </div>
 
-<button>Pay Now</button>
+<button>Pay Rent</button>
 
 <footer>
-100% Secure Payments • UPI | Cards | Net Banking
+Secure Payment • UPI | Cards | Net Banking
 </footer>
 </div>
 
@@ -147,17 +185,17 @@ function toggleCharges(){
 }
 
 function calculate(){
-  let rent = Number(document.getElementById("rentAmount").value);
-  let payment = document.querySelector('input[name="payment"]:checked').value;
-  
-  let fee = rent * payment / 100;
-  let gst = fee * 18 / 100;
-  let total = rent + fee + gst;
+  let rent=Number(document.getElementById("rent").value);
+  let percent=document.querySelector('input[name="pay"]:checked').value;
 
-  document.getElementById("rentShow").innerText = "₹"+rent.toFixed(2);
-  document.getElementById("feeShow").innerText = "₹"+fee.toFixed(2);
-  document.getElementById("gstShow").innerText = "₹"+gst.toFixed(2);
-  document.getElementById("totalShow").innerText = "₹"+total.toFixed(2);
+  let fee=rent*percent/100;
+  let gst=fee*18/100;
+  let total=rent+fee+gst;
+
+  document.getElementById("r1").innerText="₹"+rent.toFixed(2);
+  document.getElementById("r2").innerText="₹"+fee.toFixed(2);
+  document.getElementById("r3").innerText="₹"+gst.toFixed(2);
+  document.getElementById("r4").innerText="₹"+total.toFixed(2);
 }
 </script>
 
